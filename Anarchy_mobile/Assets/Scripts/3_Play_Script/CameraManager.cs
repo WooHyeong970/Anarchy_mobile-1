@@ -4,28 +4,29 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    public Transform    P1_start_point;
-    public Transform    P2_start_point;
-    bool                isMaster;
-    public Camera       camera;
+    //public Transform    P1_start_point;
+    //public Transform    P2_start_point;
+    //bool                isMaster;
+    public Camera       GameCamera;
     public float        orthoZoomSpeed = 0.03f;
 
-
-    private void Awake()
-    {
-        isMaster = CentralProcessor.Instance.isMaster;
-    }
+    //private void Awake()
+    //{
+    //    isMaster = CentralProcessor.Instance.isMaster;
+    //}
 
     private void Start()
     {
-        if(isMaster)
-        {
-            this.gameObject.transform.position = P1_start_point.position;
-        }
-        else
-        {
-            this.gameObject.transform.position = P2_start_point.position;
-        }
+        //if(isMaster)
+        //{
+        //    this.gameObject.transform.position = P1_start_point.position;
+        //}
+        //else
+        //{
+        //    this.gameObject.transform.position = P2_start_point.position;
+        //}
+
+        this.gameObject.transform.position = CentralProcessor.Instance.player.getCamPoint().position;
     }
 
     private void Update()
@@ -45,20 +46,20 @@ public class CameraManager : MonoBehaviour
 
                 float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
-                if(camera.orthographic)
+                if(GameCamera.orthographic)
                 {
-                    camera.orthographicSize += deltaMagnitudeDiff * orthoZoomSpeed;
+                    GameCamera.orthographicSize += deltaMagnitudeDiff * orthoZoomSpeed;
 
-                    camera.orthographicSize = Mathf.Max(camera.orthographicSize, 0.1f);
+                    GameCamera.orthographicSize = Mathf.Max(GameCamera.orthographicSize, 0.1f);
                 }
 
-                if(camera.orthographicSize < 4)
+                if(GameCamera.orthographicSize < 4)
                 {
-                    camera.orthographicSize = 4.1f;
+                    GameCamera.orthographicSize = 4.1f;
                 }
-                else if(camera.orthographicSize > 8)
+                else if(GameCamera.orthographicSize > 8)
                 {
-                    camera.orthographicSize = 8;
+                    GameCamera.orthographicSize = 8;
                 }
             }
         }

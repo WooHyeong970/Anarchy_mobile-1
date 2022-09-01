@@ -1,10 +1,12 @@
 using System.Dynamic;
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
 
 public class CentralProcessor : MonoBehaviourPunCallbacks
 {
@@ -75,19 +77,29 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     public Text             p2_occupation;
     public Text             GameResult;
 
+    //public Text yes;
+
     public enum PlayState {ready, play};
     public PlayState playState;
     bool isPlay = true;
+
+    public Player player;
+    public Player p1Player;
+    public Player p2Player;
 
     private void Awake()
     {
         if(PhotonNetwork.IsMasterClient)
         {
             isMaster = true;
+            //yes.GetComponent<Text>().text = "im master";
+            player = p1Player;
         }
         else
         {
             isMaster = false;
+            //yes.GetComponent<Text>().text = "im not master";
+            player = p2Player;
         }
         playState = PlayState.ready;
     }
@@ -1065,4 +1077,16 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         p2_occupation.text = P2_totalOccupation.ToString();
     }
 #endregion
+}
+
+[Serializable]
+public class Player
+{
+    [SerializeField]
+    private Transform cam_start_point;
+
+    public Transform getCamPoint()
+    {
+        return cam_start_point;
+    }
 }

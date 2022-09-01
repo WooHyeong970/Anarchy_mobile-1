@@ -5,18 +5,18 @@ using UnityEngine;
 public class AudioManager : MonoBehaviour
 {
     static public AudioManager instance;
-    GameObject          BackgroundMusic;
-    public AudioSource         backmusic;
-    AudioSource         buttonSound;
-    public AudioSource  title;
-    public AudioSource  lobby;
-    public AudioSource  game;
-    public AudioSource  gameover;
-    public AudioSource  button;
+    GameObject BackgroundMusic;
+    public AudioSource backmusic;
+    AudioSource buttonSound;
+    public AudioSource title;
+    public AudioSource lobby;
+    public AudioSource game;
+    public AudioSource gameover;
+    public AudioSource button;
 
     void Awake()
     {
-        if(instance == null)
+        if (instance == null)
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
@@ -38,7 +38,7 @@ public class AudioManager : MonoBehaviour
     public void StartLobbyBGM()
     {
         backmusic.clip = lobby.clip;
-        backmusic.Play(); 
+        backmusic.Play();
     }
 
     public void StartGameSceneBGM()
@@ -56,14 +56,14 @@ public class AudioManager : MonoBehaviour
     public void StartGameOverBGM()
     {
         backmusic.clip = gameover.clip;
-        backmusic.Play(); 
+        backmusic.Play();
     }
 
     public void StartTitleBGM()
     {
         backmusic.clip = title.clip;
         backmusic.loop = true;
-        backmusic.Play(); 
+        backmusic.Play();
     }
 
     public void StopBGM()

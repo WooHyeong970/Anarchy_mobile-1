@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1184405034363300104}
   - {fileID: 281623259189420369}
@@ -177,14 +178,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d89bc24603ad7b64bac1344ff74f4c29, type: 3}
---- !u!4 &281623259189420369 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 257049086216807431, guid: d89bc24603ad7b64bac1344ff74f4c29, type: 3}
-  m_PrefabInstance: {fileID: 34267467533747542}
-  m_PrefabAsset: {fileID: 0}
 --- !u!198 &82912525462810227 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 98848930788780837, guid: d89bc24603ad7b64bac1344ff74f4c29, type: 3}
+  m_PrefabInstance: {fileID: 34267467533747542}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &281623259189420369 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 257049086216807431, guid: d89bc24603ad7b64bac1344ff74f4c29, type: 3}
   m_PrefabInstance: {fileID: 34267467533747542}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1721891726602653411

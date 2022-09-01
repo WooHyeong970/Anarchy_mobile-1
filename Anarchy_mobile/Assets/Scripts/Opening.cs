@@ -10,16 +10,7 @@ public class Opening : MonoBehaviour
     public VideoPlayer videoPlayer;
     public Image back;
     float time = 0;
-    // Start is called before the first frame update
-    void Start()
-    {
-        // if(videoPlayer.isPlaying)
-        // {
-        //     back.gameObject.SetActive(false);
-        // }
-    }
 
-    // Update is called once per frame
     void Update()
     {
         if(videoPlayer.isPlaying)

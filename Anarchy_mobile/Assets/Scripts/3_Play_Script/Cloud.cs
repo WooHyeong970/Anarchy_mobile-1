@@ -8,14 +8,14 @@ public class Cloud : MonoBehaviour
 
     private void Start()
     {
-        animator =this.gameObject.GetComponent<Animator>();
+        animator = this.gameObject.GetComponent<Animator>();
     }
 
     private void Update()
     {
-        if(animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Idle"))
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Idle"))
         {
-            if(CentralProcessor.Instance.isMaster)
+            if (CentralProcessor.Instance.isMaster)
             {
                 CentralProcessor.Instance.uIManager.SetIdleState();
                 CentralProcessor.Instance.StartTimer();

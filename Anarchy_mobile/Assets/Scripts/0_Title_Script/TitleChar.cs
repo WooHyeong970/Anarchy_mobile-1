@@ -5,188 +5,79 @@ using UnityEngine.UI;
 
 public class TitleChar : MonoBehaviour
 {
-    public Image    mafia;
-    public Image    new_wave;
-    public Image    society;
-    Color           m_fadecolor;
-    Color           n_fadecolor;
-    Color           s_fadecolor;
+    public Image[]  images = new Image[3];
+    int             idx = 0;
+    Color           imageColor;
+
     float           start = 0f;
     float           end = 1f;
     float           time;
     float           FadeTime = 1f;
-    public bool     fade = false;
-    
-    void Start()
+
+    [SerializeField]
+    bool            fade = false;
+
+    private void Start()
     {
-        m_fadecolor = mafia.color;
-        n_fadecolor = new_wave.color;
-        s_fadecolor = society.color;
-        StartCoroutine("MafiaCharFadeIn");
+        StartCoroutine("FadeIn");
     }
 
-    IEnumerator MafiaCharFadeIn()
+    IEnumerator FadeIn()
     {
-        mafia.gameObject.SetActive(true);
+        images[idx].gameObject.SetActive(true);
+        imageColor = images[idx].color;
         time = 0f;
-        m_fadecolor.a = Mathf.Lerp(start, end, time);
-        while(true)
+        imageColor.a = Mathf.Lerp(start, end, time);
+        while (true)
         {
             yield return null;
-            if(fade)
+            if (fade)
             {
-                StartCoroutine("MafiaCharFadeOut");
-                StopCoroutine("MafiaCharFadeIn");
+                StartCoroutine("FadeOut");
+                StopCoroutine("FadeIn");
             }
-            if(m_fadecolor.a < 1f)
+            if (imageColor.a < 1f)
             {
                 time += Time.deltaTime / FadeTime;
-                m_fadecolor.a = Mathf.Lerp(start, end, time);
-                mafia.color = m_fadecolor;
+                imageColor.a = Mathf.Lerp(start, end, time);
+                images[idx].color = imageColor;
             }
-            if(m_fadecolor.a == 1f)
+            if (imageColor.a == 1f)
             {
                 fade = true;
                 yield return new WaitForSeconds(1.5f);
-            }   
+            }
         }
     }
 
-    IEnumerator MafiaCharFadeOut()
+    IEnumerator FadeOut()
     {
         time = 0f;
-        m_fadecolor.a = Mathf.Lerp(end, start, time);
-        while(true)
+        imageColor.a = Mathf.Lerp(end, start, time);
+        while (true)
         {
             yield return null;
-            if(!fade)
+            if (!fade)
             {
-                StartCoroutine("NewWaveCharFadeIn");
-                StopCoroutine("MafiaCharFadeOut");
-                mafia.gameObject.SetActive(false);
+                images[idx].gameObject.SetActive(false);
+                idx++;
+                if (idx > 2)
+                    idx = 0;
+                StartCoroutine("FadeIn");
+                StopCoroutine("FadeOut");
             }
-            if(m_fadecolor.a > 0f)
+            if (imageColor.a > 0f)
             {
                 time += Time.deltaTime / FadeTime;
-                m_fadecolor.a = Mathf.Lerp(end, start, time);
-                mafia.color = m_fadecolor;
+                imageColor.a = Mathf.Lerp(end, start, time);
+                images[idx].color = imageColor;
             }
-            if(m_fadecolor.a == 0f)
+            if (imageColor.a == 0f)
             {
                 fade = false;
-                mafia.color = m_fadecolor;
+                images[idx].color = imageColor;
                 yield return new WaitForSeconds(0.4f);
-            }   
-        }
-    }
-
-    IEnumerator NewWaveCharFadeIn()
-    {
-        new_wave.gameObject.SetActive(true);
-        time = 0f;
-        n_fadecolor.a = Mathf.Lerp(start, end, time);
-        while(true)
-        {
-            yield return null;
-            if(fade)
-            {
-                StartCoroutine("NewWaveCharFadeOut");
-                StopCoroutine("NewWaveCharFadeIn");
             }
-            if(n_fadecolor.a < 1f)
-            {
-                time += Time.deltaTime / FadeTime;
-                n_fadecolor.a = Mathf.Lerp(start, end, time);
-                new_wave.color = n_fadecolor;
-            }
-            if(n_fadecolor.a == 1f)
-            {
-                fade = true;
-                yield return new WaitForSeconds(1.5f);
-            }   
-        }
-    }
-
-    IEnumerator NewWaveCharFadeOut()
-    {
-        time = 0f;
-        n_fadecolor.a = Mathf.Lerp(end, start, time);
-        while(true)
-        {
-            yield return null;
-            if(!fade)
-            {
-                StartCoroutine("SocietyCharFadeIn");
-                StopCoroutine("NewWaveCharFadeOut");
-                new_wave.gameObject.SetActive(false);
-            }
-            if(n_fadecolor.a > 0f)
-            {
-                time += Time.deltaTime / FadeTime;
-                n_fadecolor.a = Mathf.Lerp(end, start, time);
-                new_wave.color = n_fadecolor;
-            }
-            if(n_fadecolor.a == 0f)
-            {
-                fade = false;
-                new_wave.color = n_fadecolor;
-                yield return new WaitForSeconds(0.4f);
-            }   
-        }
-    }
-
-    IEnumerator SocietyCharFadeIn()
-    {
-        society.gameObject.SetActive(true);
-        time = 0f;
-        s_fadecolor.a = Mathf.Lerp(start, end, time);
-        while(true)
-        {
-            yield return null;
-            if(fade)
-            {
-                StartCoroutine("SocietyCharFadeOut");
-                StopCoroutine("SocietyCharFadeIn");
-            }
-            if(s_fadecolor.a < 1f)
-            {
-                time += Time.deltaTime / FadeTime;
-                s_fadecolor.a = Mathf.Lerp(start, end, time);
-                society.color = s_fadecolor;
-            }
-            if(s_fadecolor.a == 1f)
-            {
-                fade = true;
-                yield return new WaitForSeconds(1.5f);
-            }    
-        }
-    }
-
-    IEnumerator SocietyCharFadeOut()
-    {
-        time = 0f;
-        s_fadecolor.a = Mathf.Lerp(end, start, time);
-        while(true)
-        {
-            yield return null;
-            if(!fade)
-            {
-                StartCoroutine("MafiaCharFadeIn");
-                StopCoroutine("SocietyCharFadeOut");
-                society.gameObject.SetActive(false);
-            }
-            if(s_fadecolor.a > 0f)
-            {
-                time += Time.deltaTime / FadeTime;
-                s_fadecolor.a = Mathf.Lerp(end, start, time);
-                society.color = s_fadecolor;
-            }
-            if(s_fadecolor.a == 0f)
-            {
-                fade = false;
-                society.color = s_fadecolor;
-                yield return new WaitForSeconds(0.4f);
-            }   
         }
     }
 }
