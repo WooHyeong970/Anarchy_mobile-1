@@ -4,27 +4,11 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    //public Transform    P1_start_point;
-    //public Transform    P2_start_point;
-    //bool                isMaster;
     public Camera       GameCamera;
     public float        orthoZoomSpeed = 0.03f;
 
-    //private void Awake()
-    //{
-    //    isMaster = CentralProcessor.Instance.isMaster;
-    //}
-
     private void Start()
     {
-        //if(isMaster)
-        //{
-        //    this.gameObject.transform.position = P1_start_point.position;
-        //}
-        //else
-        //{
-        //    this.gameObject.transform.position = P2_start_point.position;
-        //}
 
         this.gameObject.transform.position = CentralProcessor.Instance.player.getCamPoint().position;
     }
