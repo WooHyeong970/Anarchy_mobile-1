@@ -294,18 +294,18 @@ public class VariableManager : MonoBehaviour
 
     public void BuildingCostSetting()
     {
-        if(building1.GetComponent<CreateBuilding>().level < 3)
-        {
-            building1_cost.text = building_resultCost[building1.GetComponent<CreateBuilding>().level].ToString();
-        }
-        if(building2.GetComponent<CreateBuilding>().level < 3)
-        {
-            building2_cost.text = building_resultCost[building2.GetComponent<CreateBuilding>().level].ToString();
-        }
-        if(building3.GetComponent<CreateBuilding>().level < 3)
-        {
-            building3_cost.text = building_resultCost[building3.GetComponent<CreateBuilding>().level].ToString();
-        }
+        //if(building1.GetComponent<CreateBuilding>().level < 3)
+        //{
+        //    building1_cost.text = building_resultCost[building1.GetComponent<CreateBuilding>().level].ToString();
+        //}
+        //if(building2.GetComponent<CreateBuilding>().level < 3)
+        //{
+        //    building2_cost.text = building_resultCost[building2.GetComponent<CreateBuilding>().level].ToString();
+        //}
+        //if(building3.GetComponent<CreateBuilding>().level < 3)
+        //{
+        //    building3_cost.text = building_resultCost[building3.GetComponent<CreateBuilding>().level].ToString();
+        //}
     }
 
     public void UnitActiveCostEffect(int war, int arc, int mag)

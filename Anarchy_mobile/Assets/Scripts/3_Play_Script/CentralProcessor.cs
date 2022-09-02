@@ -1077,14 +1077,14 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
 #endregion
 }
 
-[Serializable]
-public class Player
-{
-    [SerializeField]
-    private Transform cam_start_point;
+//[Serializable]
+//public class Player
+//{
+//    [SerializeField]
+//    private Transform cam_start_point;
 
-    public Transform getCamPoint()
-    {
-        return cam_start_point;
-    }
-}
+//    public Transform getCamPoint()
+//    {
+//        return cam_start_point;
+//    }
+//}
