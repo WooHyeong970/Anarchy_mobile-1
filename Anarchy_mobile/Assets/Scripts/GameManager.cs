@@ -60,4 +60,31 @@ public class PlayerData
 {
     public int forceNumber = -1;
     public int mapNumber = -1;
+    string forceName;
+
+    public void setForceNumber(int num)
+    {
+        forceNumber = num;
+    }
+
+    public int getForceNumber()
+    {
+        return forceNumber;
+    }
+
+    public void setForceName(string name)
+    {
+        forceName = name;
+    }
+
+    public string getForceName()
+    {
+        return forceName;
+    }
+
+    public void setForceInfo(int num, string name)
+    {
+        forceNumber = num;
+        forceName = name;
+    }
 }

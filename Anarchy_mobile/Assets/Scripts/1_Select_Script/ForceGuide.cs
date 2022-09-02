@@ -32,14 +32,14 @@ public class ForceGuide : MonoBehaviour
     public Button[] forces = new Button[3];
     Button          curButton;
 
-    public delegate void DelSelectForce(Button btn, int num, string disc);
+    public delegate void DelSelectForce(Button btn, int num, string disc, string name);
 
     private void Start()
     {
         DelSelectForce sfHandler = new DelSelectForce(SelectForce);
-        forces[0].onClick.AddListener(() => sfHandler(forces[0], (int)forceNum2.SOCIETY , sDisc ));
-        forces[1].onClick.AddListener(() => sfHandler(forces[1], (int)forceNum2.NEW_WAVE, nDisc));
-        forces[2].onClick.AddListener(() => sfHandler(forces[2], (int)forceNum2.MAFIA, mDisc));
+        forces[0].onClick.AddListener(() => sfHandler(forces[0], (int)forceNum2.SOCIETY , sDisc, "SOCIETY" ));
+        forces[1].onClick.AddListener(() => sfHandler(forces[1], (int)forceNum2.NEW_WAVE, nDisc, "NEW_WAVE" ));
+        forces[2].onClick.AddListener(() => sfHandler(forces[2], (int)forceNum2.MAFIA, mDisc, "MAFIA" ));
 
         toTitleBtn.onClick.AddListener(() => GameManager.instance.LoadScene("0_Title"));
         nextButton.onClick.AddListener(() => SelectPanel(ChooseforcePanel, ChoosemapPanel));
@@ -47,7 +47,7 @@ public class ForceGuide : MonoBehaviour
         mapSelectButton.onClick.AddListener(() => GameManager.instance.LoadScene("2_Lobby"));
     }
 
-    private void SelectForce(Button btn, int num, string disc)
+    private void SelectForce(Button btn, int num, string disc, string name)
     {
         if(!selected)
         {
@@ -57,7 +57,10 @@ public class ForceGuide : MonoBehaviour
             btn.GetComponent<RectTransform>().sizeDelta = new Vector2(enterWidth, enterHeight);
             force_image.gameObject.SetActive(true);
             description.text = disc;
-            GameManager.instance.playerData.forceNumber = num;
+            //GameManager.instance.playerData.forceNumber = num;
+            //GameManager.instance.playerData.setForceNumber(num);
+            //GameManager.instance.playerData.setForceName(name);
+            GameManager.instance.playerData.setForceInfo(num, name);
             GameManager.instance.SaveDataToJson();
         }
         else
@@ -67,7 +70,7 @@ public class ForceGuide : MonoBehaviour
             else
             {
                 CancelForce(curButton);
-                SelectForce(btn, num, disc);
+                SelectForce(btn, num, disc, name);
             }
         }
     }

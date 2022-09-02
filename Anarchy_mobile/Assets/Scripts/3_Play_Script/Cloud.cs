@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class Cloud : MonoBehaviour
 {
@@ -28,4 +29,6 @@ public class Cloud : MonoBehaviour
             this.gameObject.SetActive(false);
         }
     }
+
+    
 }

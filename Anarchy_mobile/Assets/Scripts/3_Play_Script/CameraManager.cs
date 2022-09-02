@@ -9,7 +9,6 @@ public class CameraManager : MonoBehaviour
 
     private void Start()
     {
-
         this.gameObject.transform.position = CentralProcessor.Instance.player.getCamPoint().position;
     }
 
@@ -33,18 +32,13 @@ public class CameraManager : MonoBehaviour
                 if(GameCamera.orthographic)
                 {
                     GameCamera.orthographicSize += deltaMagnitudeDiff * orthoZoomSpeed;
-
                     GameCamera.orthographicSize = Mathf.Max(GameCamera.orthographicSize, 0.1f);
                 }
 
                 if(GameCamera.orthographicSize < 4)
-                {
                     GameCamera.orthographicSize = 4.1f;
-                }
                 else if(GameCamera.orthographicSize > 8)
-                {
                     GameCamera.orthographicSize = 8;
-                }
             }
         }
     }

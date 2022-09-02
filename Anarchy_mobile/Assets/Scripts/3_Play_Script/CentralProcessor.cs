@@ -92,13 +92,11 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         if(PhotonNetwork.IsMasterClient)
         {
             isMaster = true;
-            //yes.GetComponent<Text>().text = "im master";
             player = p1Player;
         }
         else
         {
             isMaster = false;
-            //yes.GetComponent<Text>().text = "im not master";
             player = p2Player;
         }
         playState = PlayState.ready;

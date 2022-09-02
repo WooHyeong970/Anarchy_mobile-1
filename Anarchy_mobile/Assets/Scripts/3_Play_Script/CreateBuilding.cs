@@ -1,59 +1,85 @@
 using Photon.Pun;
+using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+//using System.IO;
 
-public class CreateBuilding : MonoBehaviourPun
+public class CreateBuilding : MonoBehaviourPunCallbacks
 {
-    public GameObject   building;
     public int          type;
     public int          level = 0;
+
+    public bool         isMaster;
+
+    public GameObject   building;
+    //public GameObject test;
     public GameObject[] buildings = new GameObject[9];
+
     public Transform[]  P1_buildingArea = new Transform[3];
     public Transform[]  P2_buildingArea = new Transform[3];
-    public bool         isMaster;
-    string              s;
+
     public Image        maxImg;
     public Image        illust;
+
     public Text         levelText;
+
+    string              s;
+    //int                 forceNum;
+    string forceName;
+    int buildingLevel = 1;
+    int buildingNumber = 1;
+
+    //bool isCreateBuilding = true;
 
     private void Start()
     {
+        forceName = GameManager.instance.playerData.getForceName();
         isMaster = CentralProcessor.Instance.isMaster;
-        //building = buildings[0];
-        illust.sprite = buildings[0].GetComponent<MyBuilding>().illust;
-        switch(GameManager.instance.playerData.forceNumber)
-        {
-            case 1:
-            building = buildings[0];
-            break;
-            case 2:
-            building = buildings[1];
-            break;
-            case 3:
-            building = buildings[2];
-            break;
-        }
+        //illust.sprite = buildings[0].GetComponent<MyBuilding>().illust;
+        //test = Resources.Load<GameObject>("Assets/Photon/PhotonUnityNetworking/Resources/1-1_M.prefab");
+        //switch(GameManager.instance.playerData.getForceNumber())
+        //{
+        //    case 1:
+        //        building = buildings[0];
+        //        break;
+        //    case 2:
+        //        building = buildings[1];
+        //        break;
+        //    case 3:
+        //        building = buildings[2];
+        //        break;
+        //}
+        //go = AssetDatabase.LoadAssetAtPath("Assets/Photon/PhotonUnityNetworking/Resources/1-1_M.prefab", typeof(GameObject)) as GameObject;
+#if UNITY_EDITOR
+        building = setBuilding(buildingNumber, buildingLevel);
+#endif
     }
 
     public void CreateButtonClick()
     {
         if(CheckCost())
         {
-            CentralProcessor.Instance.uIManager.StopCoroutine("fadeoutErrorMessage");
-            s = "돈이 부족합니다";
-            CentralProcessor.Instance.uIManager.PrintErrorMessage(s);
-            CentralProcessor.Instance.uIManager.StartCoroutine("fadeoutErrorMessage");
+            //CentralProcessor.Instance.uIManager.StopCoroutine("fadeoutErrorMessage");
+            //s = "돈이 부족합니다";
+            //CentralProcessor.Instance.uIManager.PrintErrorMessage(s);
+            //CentralProcessor.Instance.uIManager.StartCoroutine("fadeoutErrorMessage");
+
+            CentralProcessor.Instance.uIManager.fadeOutErrorMessage("돈이 부족합니다");
             return;
         }
 
         if(CentralProcessor.Instance.createBuildingNumber == 0)
         {
-            CentralProcessor.Instance.uIManager.StopCoroutine("fadeoutErrorMessage");
-            s = "건설 횟수 초과";
-            CentralProcessor.Instance.uIManager.PrintErrorMessage(s);
-            CentralProcessor.Instance.uIManager.StartCoroutine("fadeoutErrorMessage");
+            //CentralProcessor.Instance.uIManager.StopCoroutine("fadeoutErrorMessage");
+            //s = "건설 횟수 초과";
+            //CentralProcessor.Instance.uIManager.PrintErrorMessage(s);
+            //CentralProcessor.Instance.uIManager.StartCoroutine("fadeoutErrorMessage");
+            CentralProcessor.Instance.uIManager.fadeOutErrorMessage("건설 횟수 초과");
             return;
         }
 
@@ -186,4 +212,13 @@ public class CreateBuilding : MonoBehaviourPun
     {
         CentralProcessor.Instance.currentMoney.text = (int.Parse(CentralProcessor.Instance.currentMoney.text) - cost).ToString();
     }
+
+#if UNITY_EDITOR
+    GameObject setBuilding(int buildNum, int buildLevel)
+    {
+        return AssetDatabase.LoadAssetAtPath("Assets/Photon/PhotonUnityNetworking/Resources/" + buildNum.ToString() + "-" + buildLevel.ToString() + "_" + forceName + ".prefab", typeof(GameObject)) as GameObject;
+        //GameObject go = AssetDatabase.LoadAssetAtPath("Assets/Photon/PhotonUnityNetworking/Resources/1-1_M.prefab", typeof(GameObject)) as GameObject;
+        //return go;
+    }
+#endif
 }

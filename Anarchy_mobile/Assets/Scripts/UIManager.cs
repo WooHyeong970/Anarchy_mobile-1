@@ -57,6 +57,8 @@ public class UIManager : MonoBehaviourPun
     public Text     checkWindowtext;
     public Text     BGMOnOffText;
 
+    IEnumerator errorMessageCo;
+
     public enum State { Ready, Next, Idle, Active, Attack, End };
     public State state = State.Idle;
 
@@ -74,6 +76,7 @@ public class UIManager : MonoBehaviourPun
             settingButton.gameObject.SetActive(false);
             exitButton.gameObject.SetActive(false);
         }
+        errorMessageCo = fadeoutErrorMessage();
     }
 
     private void Update()
@@ -537,5 +540,13 @@ public class UIManager : MonoBehaviourPun
         }
         errorMessage.gameObject.SetActive(false);
         StopCoroutine(fadeoutErrorMessage());
+    }
+
+    public void fadeOutErrorMessage(string mesg)
+    {
+        StopCoroutine(errorMessageCo);
+        errorMessageCo = fadeoutErrorMessage();
+        PrintErrorMessage(mesg);
+        StartCoroutine(errorMessageCo);
     }
 }
