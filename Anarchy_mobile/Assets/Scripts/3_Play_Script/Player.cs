@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 
  [Serializable]
-public class Player //: MonoBehaviour
+public class Player
 {
     [SerializeField]
     private Transform cam_start_point;
@@ -13,7 +13,16 @@ public class Player //: MonoBehaviour
     private Transform[] building_area = new Transform[3];
 
     [SerializeField]
+    private Transform[] unit_area = new Transform[3];
+
+    [SerializeField]
     private int quaternion;
+
+    [SerializeField]
+    LayerMask layer;
+
+    bool[] is_exists = new bool[3];
+    
 
     public Transform getCamPoint()
     {
@@ -25,8 +34,28 @@ public class Player //: MonoBehaviour
         return building_area[type];
     }
 
+    public Transform getUnitArea(int num)
+    {
+        return unit_area[num];
+    }
+
     public int getQuaternioin()
     {
         return quaternion;
+    }
+
+    public bool getIsExist(int num)
+    {
+        return is_exists[num];
+    }
+
+    public void setIsExist(int num, bool check)
+    {
+        is_exists[num] = check;
+    }
+
+    public LayerMask getLayer()
+    {
+        return layer;
     }
 }

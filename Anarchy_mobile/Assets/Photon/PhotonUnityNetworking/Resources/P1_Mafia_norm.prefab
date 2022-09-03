@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8944344546685411365}
-  - component: {fileID: 718568152030754779}
+  - component: {fileID: -95672430041754129}
   - component: {fileID: -6600907765160857598}
   - component: {fileID: -9209160782782002507}
-  - component: {fileID: 2029587619976934225}
+  - component: {fileID: 718568152030754779}
   m_Layer: 7
   m_Name: P1_Mafia_norm
   m_TagString: Unit
@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2318891277153038990}
   - {fileID: 96495622206723687}
@@ -37,20 +38,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &718568152030754779
-CapsuleCollider:
+--- !u!114 &-95672430041754129
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2309933314818286056}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.34
-  m_Height: 1.81
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9887c1e16df1d5349a62868d9fdf88f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 3
+  cost: 250
+  hp: 0
+  illust: {fileID: 21300000, guid: 1f43b832babfbf04bb4f72e9fc323c7f, type: 3}
+  activeCost: 6
+  accDamage: 0
+  unit_name: Mafia_norm
+  myNum: 0
+  defensive: 104
+  offensive: 56
+  currentTile: {fileID: 0}
+  isAttackready: 0
+  particleSystem: {fileID: 440931809431912271, guid: 54f1f5032a11b5a4cbef5798bdc77bfd, type: 3}
+  attackParticle: {fileID: 8225257503996324723, guid: 54f1f5032a11b5a4cbef5798bdc77bfd, type: 3}
 --- !u!114 &-6600907765160857598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,32 +103,20 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!114 &2029587619976934225
-MonoBehaviour:
+--- !u!136 &718568152030754779
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2309933314818286056}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9887c1e16df1d5349a62868d9fdf88f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 3
-  cost: 250
-  hp: 0
-  illust: {fileID: 21300000, guid: 1f43b832babfbf04bb4f72e9fc323c7f, type: 3}
-  activeCost: 6
-  accDamage: 0
-  unit_name: Mafia_norm
-  myNum: 0
-  defensive: 104
-  offensive: 56
-  currentTile: {fileID: 0}
-  isAttackready: 0
-  particleSystem: {fileID: 259172610827229509}
-  attackParticle: {fileID: 79019220118550638}
+  m_Radius: 0.34
+  m_Height: 1.81
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!1001 &200386586427896416
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -180,11 +181,6 @@ PrefabInstance:
 --- !u!4 &96495622206723687 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 257049086216807431, guid: d89bc24603ad7b64bac1344ff74f4c29, type: 3}
-  m_PrefabInstance: {fileID: 200386586427896416}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &259172610827229509 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 98848930788780837, guid: d89bc24603ad7b64bac1344ff74f4c29, type: 3}
   m_PrefabInstance: {fileID: 200386586427896416}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2856656733169259877
@@ -313,10 +309,5 @@ PrefabInstance:
 --- !u!4 &263490640377316578 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4740149576202560894, guid: 049a8aeb0b21a0445bc4d427b2bd18b6, type: 3}
-  m_PrefabInstance: {fileID: 4782963248398934428}
-  m_PrefabAsset: {fileID: 0}
---- !u!198 &79019220118550638 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 4861851526756899314, guid: 049a8aeb0b21a0445bc4d427b2bd18b6, type: 3}
   m_PrefabInstance: {fileID: 4782963248398934428}
   m_PrefabAsset: {fileID: 0}

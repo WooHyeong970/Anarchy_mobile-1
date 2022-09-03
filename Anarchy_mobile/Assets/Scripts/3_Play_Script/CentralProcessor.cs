@@ -451,6 +451,11 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     {
         photonView.RPC("SumOccupationRPC", RpcTarget.All, p1, p2);
     }
+
+    public void CreateBuilding()
+    {
+        photonView.RPC("CreateBuildingRPC", RpcTarget.All);
+    }
 #endregion
 
 #region // RPC functions
@@ -1073,6 +1078,12 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         P2_totalOccupation += p2;
         p1_occupation.text = P1_totalOccupation.ToString();
         p2_occupation.text = P2_totalOccupation.ToString();
+    }
+
+    [PunRPC]
+    private void CreateBuildingRPC()
+    {
+
     }
 #endregion
 }

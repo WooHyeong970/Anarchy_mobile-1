@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8600714619397730286}
-  - component: {fileID: 321347101959296876}
+  - component: {fileID: -4883113776088956393}
   - component: {fileID: -783139885724847630}
   - component: {fileID: 3473414179167591177}
-  - component: {fileID: -4883113776088956393}
+  - component: {fileID: 321347101959296876}
   m_Layer: 7
   m_Name: P1_New_wave_norm
   m_TagString: Unit
@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6353166552848468017}
   - {fileID: 4111972196420553380}
@@ -37,20 +38,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &321347101959296876
-CapsuleCollider:
+--- !u!114 &-4883113776088956393
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6691757275657758264}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.34
-  m_Height: 1.81
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9887c1e16df1d5349a62868d9fdf88f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 3
+  cost: 250
+  hp: 0
+  illust: {fileID: 21300000, guid: 1f43b832babfbf04bb4f72e9fc323c7f, type: 3}
+  activeCost: 4
+  accDamage: 0
+  unit_name: NewWave_norm
+  myNum: 0
+  defensive: 88
+  offensive: 88
+  currentTile: {fileID: 0}
+  isAttackready: 0
+  particleSystem: {fileID: 4314095161328207238}
+  attackParticle: {fileID: 2625939003636219882}
 --- !u!114 &-783139885724847630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,32 +103,20 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!114 &-4883113776088956393
-MonoBehaviour:
+--- !u!136 &321347101959296876
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6691757275657758264}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9887c1e16df1d5349a62868d9fdf88f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 3
-  cost: 250
-  hp: 0
-  illust: {fileID: 21300000, guid: 1f43b832babfbf04bb4f72e9fc323c7f, type: 3}
-  activeCost: 4
-  accDamage: 0
-  unit_name: NewWave_norm
-  myNum: 0
-  defensive: 88
-  offensive: 88
-  currentTile: {fileID: 0}
-  isAttackready: 0
-  particleSystem: {fileID: 4314095161328207238}
-  attackParticle: {fileID: 2625939003636219882}
+  m_Radius: 0.34
+  m_Height: 1.81
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!1001 &4215809215255850659
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -310,13 +311,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 049a8aeb0b21a0445bc4d427b2bd18b6, type: 3}
---- !u!4 &2792677367218750310 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4740149576202560894, guid: 049a8aeb0b21a0445bc4d427b2bd18b6, type: 3}
-  m_PrefabInstance: {fileID: 7424731165537166872}
-  m_PrefabAsset: {fileID: 0}
 --- !u!198 &2625939003636219882 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 4861851526756899314, guid: 049a8aeb0b21a0445bc4d427b2bd18b6, type: 3}
+  m_PrefabInstance: {fileID: 7424731165537166872}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2792677367218750310 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4740149576202560894, guid: 049a8aeb0b21a0445bc4d427b2bd18b6, type: 3}
   m_PrefabInstance: {fileID: 7424731165537166872}
   m_PrefabAsset: {fileID: 0}

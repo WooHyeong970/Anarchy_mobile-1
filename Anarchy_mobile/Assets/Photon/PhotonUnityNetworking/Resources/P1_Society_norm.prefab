@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 764582245022065440}
-  - component: {fileID: 300313031505505619}
+  - component: {fileID: -1395385769165267689}
   - component: {fileID: -5917377950446496528}
   - component: {fileID: 5055035484665890264}
-  - component: {fileID: -1395385769165267689}
+  - component: {fileID: 300313031505505619}
   m_Layer: 7
   m_Name: P1_Society_norm
   m_TagString: Unit
@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7791548668298163211}
   - {fileID: 2144578084235685100}
@@ -37,20 +38,32 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &300313031505505619
-CapsuleCollider:
+--- !u!114 &-1395385769165267689
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2788792190546652374}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.34
-  m_Height: 1.81
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.9, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9887c1e16df1d5349a62868d9fdf88f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 3
+  cost: 250
+  hp: 0
+  illust: {fileID: 21300000, guid: 1f43b832babfbf04bb4f72e9fc323c7f, type: 3}
+  activeCost: 4
+  accDamage: 0
+  unit_name: Society_norm
+  myNum: 0
+  defensive: 56
+  offensive: 104
+  currentTile: {fileID: 0}
+  isAttackready: 0
+  particleSystem: {fileID: 2237449244143887310}
+  attackParticle: {fileID: 9162028994322135217}
 --- !u!114 &-5917377950446496528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,32 +103,20 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
---- !u!114 &-1395385769165267689
-MonoBehaviour:
+--- !u!136 &300313031505505619
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2788792190546652374}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9887c1e16df1d5349a62868d9fdf88f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 3
-  cost: 250
-  hp: 0
-  illust: {fileID: 21300000, guid: 1f43b832babfbf04bb4f72e9fc323c7f, type: 3}
-  activeCost: 4
-  accDamage: 0
-  unit_name: Society_norm
-  myNum: 0
-  defensive: 56
-  offensive: 104
-  currentTile: {fileID: 0}
-  isAttackready: 0
-  particleSystem: {fileID: 2237449244143887310}
-  attackParticle: {fileID: 9162028994322135217}
+  m_Radius: 0.34
+  m_Height: 1.81
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!1001 &2184855702587967723
 PrefabInstance:
   m_ObjectHideFlags: 0

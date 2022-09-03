@@ -1,10 +1,10 @@
-using System.Net.NetworkInformation;
+//using System.Net.NetworkInformation;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
+//using UnityEngine.UI;
 
 public class MyUnit : MonoBehaviourPun, IPointerClickHandler
 {
@@ -23,6 +23,8 @@ public class MyUnit : MonoBehaviourPun, IPointerClickHandler
     bool isMaster;
     public ParticleSystem particleSystem;
     public ParticleSystem attackParticle;
+    bool isReady;
+
 
     private void Start()
     {
@@ -32,11 +34,39 @@ public class MyUnit : MonoBehaviourPun, IPointerClickHandler
     public void OnPointerClick(PointerEventData eventData)
     {
         if(currentTile != CentralProcessor.Instance.currentTile)
-        {
             return;
-        }
+        // ======================================================================
+        switch(CentralProcessor.Instance.uIManager.state)
+        {
+            case UIManager.State.Idle:
+                if(this.gameObject.layer == CentralProcessor.Instance.player.getLayer())
+                    Ready();
+                else
+                    ShowInfo();
+                break;
+            case UIManager.State.Attack:
+                if (this.gameObject.layer == CentralProcessor.Instance.player.getLayer())
+                {
 
-        if(CentralProcessor.Instance.uIManager.state == UIManager.State.Idle)
+                }
+                else
+                {
+
+                }
+                break;
+            case UIManager.State.Next:
+                if (this.gameObject.layer == CentralProcessor.Instance.player.getLayer())
+                {
+
+                }
+                else
+                {
+
+                }
+                break;
+        }
+        // ======================================================================
+        if (CentralProcessor.Instance.uIManager.state == UIManager.State.Idle)
         {
             if((isMaster && this.gameObject.layer == 8) || (!isMaster && this.gameObject.layer == 7))
             {
@@ -56,7 +86,7 @@ public class MyUnit : MonoBehaviourPun, IPointerClickHandler
                 if(CentralProcessor.Instance.currentUnit != this.gameObject.GetComponent<MyUnit>())
                 {
                     CentralProcessor.Instance.uIManager.InfoWindowReset();
-                    OnReady();
+                    Ready();
                 }
                 else
                 {
@@ -111,18 +141,35 @@ public class MyUnit : MonoBehaviourPun, IPointerClickHandler
         }
     }
 
-    public void OnReady()
+    public void Ready()
     {
-        CentralProcessor.Instance.currentUnit = this.gameObject.GetComponent<MyUnit>();
-        CentralProcessor.Instance.currentUnit.particleSystem.gameObject.SetActive(true);
-        CentralProcessor.Instance.currentUnit.particleSystem.Play();
-        ShowInfo();
-        CentralProcessor.Instance.uIManager.unitButtonPanel.gameObject.SetActive(true);
+        if(!isReady)
+        {
+            isReady = true;
+            CentralProcessor.Instance.uIManager.InfoWindowReset();
+            CentralProcessor.Instance.currentUnit = this.gameObject.GetComponent<MyUnit>();
+            CentralProcessor.Instance.currentUnit.particleSystem.gameObject.SetActive(true);
+            CentralProcessor.Instance.currentUnit.particleSystem.Play();
+            ShowInfo();
+            CentralProcessor.Instance.uIManager.unitButtonPanel.gameObject.SetActive(true);
+        }
+        else
+        {
+            isReady = false;
+            CentralProcessor.Instance.uIManager.InfoWindowReset();
+        }
     }
 
     public void ShowInfo()
     {
-        CentralProcessor.Instance.uIManager.ShowUnitInfo(hp, illust, unit_name, activeCost, offensive, defensive);
+        if (CentralProcessor.Instance.currentEnemy != this.gameObject.GetComponent<MyUnit>())
+        {
+            CentralProcessor.Instance.uIManager.InfoWindowReset();
+            CentralProcessor.Instance.currentEnemy = this.gameObject.GetComponent<MyUnit>();
+            CentralProcessor.Instance.uIManager.ShowUnitInfo(hp, illust, unit_name, activeCost, offensive, defensive);
+        }
+        else
+            CentralProcessor.Instance.uIManager.InfoWindowReset();
     }
 
     public void ActiveCostUpdate()
