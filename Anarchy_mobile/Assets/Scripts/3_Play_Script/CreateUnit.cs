@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Status;
 
 public class CreateUnit : MonoBehaviourPunCallbacks
 {
@@ -14,7 +15,7 @@ public class CreateUnit : MonoBehaviourPunCallbacks
     int[]               unitCosts = new int[3];
     string              forceName;
 
-    StatusManager       statusManager;
+    StatusManager       statusManager = new StatusManager();
 
     private void Start()
     {
@@ -93,9 +94,7 @@ public class CreateUnit : MonoBehaviourPunCallbacks
     GameObject InstantiateUnit(int type, int area)
     {
         GameObject unit = PhotonNetwork.Instantiate(forceName + "_TYPE" + type.ToString(), CentralProcessor.Instance.player.getUnitArea(area).position, Quaternion.Euler(0, CentralProcessor.Instance.player.getQuaternioin(), 0)) as GameObject;
-        unit.layer = CentralProcessor.Instance.player.getLayer();
-        statusManager.setCreatedUnitStatus(unit.GetComponent<MyUnit>());
-        //return PhotonNetwork.Instantiate(forceName + "_TYPE" + type.ToString(), CentralProcessor.Instance.player.getUnitArea(area).position, Quaternion.Euler(0, CentralProcessor.Instance.player.getQuaternioin(), 0)) as GameObject;
+        statusManager.setCreatedUnitStatus(unit);
         return unit;
     }
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using AnarchyUtility;
 
 public class CreateBuilding : MonoBehaviourPunCallbacks
 {
@@ -16,6 +17,11 @@ public class CreateBuilding : MonoBehaviourPunCallbacks
 
     public Button[]     buildingButtons = new Button[3];
 
+    UIManager UI = CentralProcessor.Instance.uIManager;
+    Utility UT = new Utility();
+    CentralProcessor CP;
+    VariableManager VM;
+
     private void Start()
     {
         buildingButtons[0].onClick.AddListener(() => CreateBuildingFunc(buildingButtons[0], 1, levels[0]));
@@ -26,27 +32,30 @@ public class CreateBuilding : MonoBehaviourPunCallbacks
 
     private void CreateBuildingFunc(Button button, int type, int level)
     {
-        if(CheckCost(level))
+        VM = new VariableManager();
+        CP = CentralProcessor.Instance;
+        int cost = VM.building_resultCost[level];
+
+        if (UT.CheckCost(cost, CP.getMoney()))
         {
-            CentralProcessor.Instance.uIManager.fadeOutErrorMessage("돈이 부족합니다");
+            UI.fadeOutErrorMessage("돈이 부족합니다");
             return;
         }
 
-        if (CentralProcessor.Instance.createBuildingNumber == 0)
+        if (CP.buildCnt == 0)
         {
-            CentralProcessor.Instance.uIManager.fadeOutErrorMessage("건설 횟수 초과");
+            UI.fadeOutErrorMessage("건설 횟수 초과");
             return;
         }
 
-        CentralProcessor.Instance.effectSoundManager.PlayButtonClickSound();
-
-        CalculateCost(VariableManager.Instance.building_resultCost[level]);
+        CP.effectSoundManager.PlayButtonClickSound();
+        CP.currentMoney.text = UT.CalculateCost(CP.getMoney(), cost);
 
         levels[type - 1] = ++level;
 
         GameObject _building = InstantiateBuilding(type, level);
 
-        CentralProcessor.Instance.currentBuildings[type - 1] = _building.GetComponent<MyBuilding>();
+        CP.currentBuildings[type - 1] = _building.GetComponent<MyBuilding>();
 
         illust[type - 1].sprite = Resources.Load<Sprite>("BuildingIllusts/TYPE_" + type.ToString() + "_" + (level + 1).ToString());
         level_text[type - 1].text = "X " + levels[type - 1].ToString();
@@ -77,19 +86,6 @@ public class CreateBuilding : MonoBehaviourPunCallbacks
         }
     }
 
-    private bool CheckCost(int level)
-    {
-        bool b = true;
-        if (VariableManager.Instance.building_resultCost[level] > int.Parse(CentralProcessor.Instance.currentMoney.text))
-        {
-            return b;
-        }
-        else
-        {
-            return !b;
-        }
-    }
-
     private void CalculateCost(int cost)
     {
         CentralProcessor.Instance.currentMoney.text = (int.Parse(CentralProcessor.Instance.currentMoney.text) - cost).ToString();
@@ -97,7 +93,7 @@ public class CreateBuilding : MonoBehaviourPunCallbacks
 
     GameObject InstantiateBuilding(int type, int level)
     {
-        CentralProcessor.Instance.createBuildingNumber = 0;
+        CentralProcessor.Instance.buildCnt = 0;
         CentralProcessor.Instance.SumScore(5, 0);
         return PhotonNetwork.Instantiate(type.ToString() + "-" + level.ToString() + "_" + forceName, CentralProcessor.Instance.player.getBuilingArea(type - 1).position, Quaternion.Euler(0, CentralProcessor.Instance.player.getQuaternioin(), 0)) as GameObject;
     }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -6600907765160857598}
   - component: {fileID: -9209160782782002507}
   - component: {fileID: 718568152030754779}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: MAFIA_TYPE3
   m_TagString: Unit
   m_Icon: {fileID: 0}

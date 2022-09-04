@@ -1,190 +1,121 @@
-//using System.Net.NetworkInformation;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-//using UnityEngine.UI;
+using AnarchyUtility;
 
-public class MyUnit : MonoBehaviourPun, IPointerClickHandler
+public class MyUnit : MonoBehaviourPun
 {
-    public int type;
-    public int cost;
-    public int hp;
-    public Sprite illust;
-    public int activeCost;
-    public int accDamage = 0;
-    public string unit_name;
-    public int myNum;
-    public int defensive;
-    public int offensive;
-    public Tile currentTile;
-    public bool isAttackready = false;
-    bool isMaster;
-    public ParticleSystem particleSystem;
-    public ParticleSystem attackParticle;
-    bool isReady;
+    public int              type;
+    public int              cost;
+    public int              hp;
+    public Sprite           illust;
+    public int              activeCost;
+    public int              accDamage = 0;
+    public string           unit_name;
+    public int              myNum;
+    public int              defensive;
+    public int              offensive;
 
+    public Tile             currentTile;
+    public bool             isAttackready = false;
 
-    private void Start()
+    public ParticleSystem   particleSystem;
+    public ParticleSystem   attackParticle;
+
+    bool                    isClicked;
+
+    Utility UT = new Utility();
+    UIManager UI = CentralProcessor.Instance.uIManager;
+    CentralProcessor CP;
+
+    private void Update()
     {
-        isMaster = CentralProcessor.Instance.isMaster;
+        CP = CentralProcessor.Instance;
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnClick()
     {
-        if(currentTile != CentralProcessor.Instance.currentTile)
+        if (isClicked)
+        {
+            CloseInfo();
             return;
-        // ======================================================================
-        switch(CentralProcessor.Instance.uIManager.state)
+        }
+
+        isClicked = true;
+        switch(UI.state)
         {
             case UIManager.State.Idle:
-                if(this.gameObject.layer == CentralProcessor.Instance.player.getLayer())
-                    Ready();
-                else
-                    ShowInfo();
+                Ready();
                 break;
             case UIManager.State.Attack:
-                if (this.gameObject.layer == CentralProcessor.Instance.player.getLayer())
-                {
-
-                }
-                else
-                {
-
-                }
+                Attack();
                 break;
             case UIManager.State.Next:
-                if (this.gameObject.layer == CentralProcessor.Instance.player.getLayer())
-                {
-
-                }
-                else
-                {
-
-                }
+                ShowInfo();
                 break;
         }
-        // ======================================================================
-        if (CentralProcessor.Instance.uIManager.state == UIManager.State.Idle)
-        {
-            if((isMaster && this.gameObject.layer == 8) || (!isMaster && this.gameObject.layer == 7))
-            {
-                if(CentralProcessor.Instance.currentEnemy != this.gameObject.GetComponent<MyUnit>())
-                {
-                    CentralProcessor.Instance.uIManager.InfoWindowReset();
-                    CentralProcessor.Instance.currentEnemy = this.gameObject.GetComponent<MyUnit>();
-                    ShowInfo();
-                }
-                else
-                {
-                    CentralProcessor.Instance.uIManager.InfoWindowReset();
-                }
-            }   
-            else
-            {
-                if(CentralProcessor.Instance.currentUnit != this.gameObject.GetComponent<MyUnit>())
-                {
-                    CentralProcessor.Instance.uIManager.InfoWindowReset();
-                    Ready();
-                }
-                else
-                {
-                    CentralProcessor.Instance.uIManager.InfoWindowReset();
-                }
-            }
-        }
-        else if(CentralProcessor.Instance.uIManager.state == UIManager.State.Attack)
-        {
-            if((isMaster && this.gameObject.layer == 8) || (!isMaster && this.gameObject.layer == 7))
-            {
-                if(CentralProcessor.Instance.uIManager.state == UIManager.State.Attack)
-                {
-                    CentralProcessor.Instance.Attact(CentralProcessor.Instance.currentUnit.GetComponent<PhotonView>().ViewID, this.gameObject.GetComponent<PhotonView>().ViewID);
-                    if(CentralProcessor.Instance.currentUnit == null)
-                    {
-                        return;
-                    }
-                }
-            }
-        }
-        else if(CentralProcessor.Instance.uIManager.state == UIManager.State.Next)
-        {
-            if((isMaster && this.gameObject.layer == 8) || (!isMaster && this.gameObject.layer == 7))
-            {
-                if(CentralProcessor.Instance.currentEnemy != this.gameObject.GetComponent<MyUnit>())
-                {
-                    CentralProcessor.Instance.uIManager.InfoWindowReset();
-                    CentralProcessor.Instance.currentEnemy = this.gameObject.GetComponent<MyUnit>();
-                    ShowInfo();
-                }
-                else
-                {
-                    CentralProcessor.Instance.uIManager.InfoWindowReset();
-                }
-            }   
-            else
-            {
-                if(CentralProcessor.Instance.currentUnit != this.gameObject.GetComponent<MyUnit>())
-                {
-                    CentralProcessor.Instance.uIManager.InfoWindowReset();
-                    CentralProcessor.Instance.currentUnit = this.gameObject.GetComponent<MyUnit>();
-                    CentralProcessor.Instance.currentUnit.particleSystem.gameObject.SetActive(true);
-                    CentralProcessor.Instance.currentUnit.particleSystem.Play();
-                    ShowInfo();
-                }
-                else
-                {
-                    CentralProcessor.Instance.uIManager.InfoWindowReset();
-                }
-            }
-        }
     }
 
-    public void Ready()
+    private void Ready()
     {
-        if(!isReady)
+        if (this.gameObject.layer == CP.player.getLayer())
         {
-            isReady = true;
-            CentralProcessor.Instance.uIManager.InfoWindowReset();
-            CentralProcessor.Instance.currentUnit = this.gameObject.GetComponent<MyUnit>();
-            CentralProcessor.Instance.currentUnit.particleSystem.gameObject.SetActive(true);
-            CentralProcessor.Instance.currentUnit.particleSystem.Play();
-            ShowInfo();
-            CentralProcessor.Instance.uIManager.unitButtonPanel.gameObject.SetActive(true);
+            StartParticle();
+            UT.SetActive(UI.unitButtonPanel, true);
+            if(CP.currentUnit != null)
+                CP.currentUnit.CloseInfo();
+
+            CP.currentUnit = this.gameObject.GetComponent<MyUnit>();
         }
-        else
-        {
-            isReady = false;
-            CentralProcessor.Instance.uIManager.InfoWindowReset();
-        }
+        ShowInfo();
     }
 
-    public void ShowInfo()
+    private void ShowInfo()
     {
-        if (CentralProcessor.Instance.currentEnemy != this.gameObject.GetComponent<MyUnit>())
-        {
-            CentralProcessor.Instance.uIManager.InfoWindowReset();
-            CentralProcessor.Instance.currentEnemy = this.gameObject.GetComponent<MyUnit>();
-            CentralProcessor.Instance.uIManager.ShowUnitInfo(hp, illust, unit_name, activeCost, offensive, defensive);
-        }
-        else
-            CentralProcessor.Instance.uIManager.InfoWindowReset();
+        UI.ShowUnitInfo(this.gameObject.GetComponent<MyUnit>());
+    }
+
+    public void CloseInfo()
+    {
+        isClicked = false;
+        StopParticle();
+        UI.CloseUnitInfo();
+    }
+
+    private void Attack()
+    {
+        if (this.gameObject.layer == CP.player.getLayer())
+            return;
+
+        CP.Attact(CP.currentUnit.GetComponent<PhotonView>().ViewID, this.gameObject.GetComponent<PhotonView>().ViewID);
+    }
+
+    private void StopParticle()
+    {
+        particleSystem.Clear();
+        UT.SetActive(particleSystem, false);
+    }
+
+    private void StartParticle()
+    {
+        UT.SetActive(particleSystem, true);
+        particleSystem.Play();
     }
 
     public void ActiveCostUpdate()
     {
-        switch(type)
+        switch (type)
         {
             case 1:
-            activeCost =  VariableManager.Instance.war_act;
-            break;
+                activeCost = VariableManager.Instance.war_act;
+                break;
             case 2:
-            activeCost = VariableManager.Instance.arc_act;
-            break;
+                activeCost = VariableManager.Instance.arc_act;
+                break;
             case 3:
-            activeCost = VariableManager.Instance.mag_act;
-            break;
+                activeCost = VariableManager.Instance.mag_act;
+                break;
         }
     }
 }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2415046479587879584}
   - component: {fileID: 1191287727483184465}
   - component: {fileID: 7163244800512619094}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: NEW_WAVE_TYPE2
   m_TagString: Unit
   m_Icon: {fileID: 0}

@@ -19,7 +19,7 @@ public class Player
     private int quaternion;
 
     [SerializeField]
-    LayerMask layer;
+    private int layer;
 
     bool[] is_exists = new bool[3];
     

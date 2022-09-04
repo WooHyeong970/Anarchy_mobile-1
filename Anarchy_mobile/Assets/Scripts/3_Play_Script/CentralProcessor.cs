@@ -40,7 +40,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     public Tile[]           tiles;
     public MyBuilding[]     currentBuildings = new MyBuilding[3];
     public int              createUnitNumber = 3;
-    public int              createBuildingNumber = 1;
+    public int              buildCnt = 1;
     public Image            waitingPanel;
     public Text             waitingText;
     public Queue            que = new Queue();
@@ -53,6 +53,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     public IEnumerator      t;
     public bool             isIgnoreCheck = true;
     public Text             turnEndText;
+    int money;
 
     public int              P1_score = 0;
     public int              P2_score = 0;
@@ -86,6 +87,16 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     public Player player;
     public Player p1Player;
     public Player p2Player;
+
+    public CentralProcessor getCent()
+    {
+        return CentralProcessor.instance;
+    }
+
+    public int getMoney()
+    {
+        return money;
+    }
 
     private void Awake()
     {
@@ -500,7 +511,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     private void NextTurnRPC()
     {
         currentTurn.text = ((turn_Number / 2) + 1).ToString() + "   TURN";
-        createBuildingNumber = 1;
+        buildCnt = 1;
         effectSoundManager.PlayGoldSound();
     }
 

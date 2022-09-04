@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
+using AnarchyUtility;
 
 public class UIManager : MonoBehaviourPun
 {
@@ -58,6 +59,8 @@ public class UIManager : MonoBehaviourPun
     public Text     BGMOnOffText;
 
     IEnumerator errorMessageCo;
+
+    Utility utility = new Utility();
 
     public enum State { Ready, Next, Idle, Active, Attack, End };
     public State state = State.Idle;
@@ -380,14 +383,7 @@ public class UIManager : MonoBehaviourPun
         return dis;
     }
 
-    public void CloseUnitInfo()
-    {
-        unitInfo_panel.gameObject.SetActive(false);
-        foreach(Image hp in unit_hp)
-        {
-            hp.gameObject.SetActive(false);
-        }
-    }
+    
 
     public void MoveUnit()
     {
@@ -548,5 +544,30 @@ public class UIManager : MonoBehaviourPun
         errorMessageCo = fadeoutErrorMessage();
         PrintErrorMessage(mesg);
         StartCoroutine(errorMessageCo);
+    }
+
+    public void ShowUnitInfo(MyUnit unit)
+    {
+        utility.SetActive(unitInfo_panel, true);
+        unit_name.text = unit.gameObject.name;
+        unit_activeCost.text = unit.cost.ToString();
+        unit_illust.sprite = unit.illust;
+        unit_ATK.text = unit.offensive.ToString();
+        unit_DEF.text = unit.defensive.ToString();
+
+        for (int i = 0; i < unit.hp; i++)
+            utility.SetActive(unit_hp[i], true);
+    }
+
+    public void CloseUnitInfo()
+    {
+        utility.SetActive(unitInfo_panel, false);
+        resetUnitHPBar();
+    }
+
+    public void resetUnitHPBar()
+    {
+        foreach (Image hp in unit_hp)
+            utility.SetActive(hp, false);
     }
 }
