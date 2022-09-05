@@ -1,12 +1,12 @@
 using System.Dynamic;
 using Photon.Pun;
-using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
+using AnarchyUtility;
 
 public class CentralProcessor : MonoBehaviourPunCallbacks
 {
@@ -28,32 +28,34 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     public Text             currentTurn;
     public bool             isMaster;
     public int              turn_Number = 0;
-    public Tile             currentTile;
+    
     public MyUnit           currentUnit;
     public MyUnit           currentEnemy;
     public MyBuilding       currentBuilding;
     public Tile             P1_core_Tile;
     public Tile             P2_core_Tile;
-    public Text             currentMoney;
-    public Color            color;
+    
+    
     public Button           current_moveButton;
     public Tile[]           tiles;
     public MyBuilding[]     currentBuildings = new MyBuilding[3];
     public int              createUnitNumber = 3;
     public int              buildCnt = 1;
     public Image            waitingPanel;
-    public Text             waitingText;
+    
     public Queue            que = new Queue();
     public Cloud            cloud;
     public Button           decisionButton;
     public bool             firstDecision = false;
     public Text             timer;
     public float            time = 10;
+    public Color minimapNormalColor;
     private float           selectCount;
-    public IEnumerator      t;
+    //public IEnumerator      t;
     public bool             isIgnoreCheck = true;
     public Text             turnEndText;
-    int money;
+    [SerializeField]
+    
 
     public int              P1_score = 0;
     public int              P2_score = 0;
@@ -80,36 +82,41 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
 
     //public Text yes;
 
-    public enum PlayState {ready, play};
-    public PlayState playState;
+    
+
+
+    //================================================================================
+    // variable
+    //================================================================================
+    Utility UT = new Utility();
+
+    enum PlayState { ready, play };
+    PlayState playState;
+
     bool isPlay = true;
+    bool isWaiting = true;
+    public Text waitingText;
+
+    public Tile currentTile;
+
+    int money;
+    public Text currentMoney;
+
+    public IEnumerator t;
 
     public Player player;
     public Player p1Player;
     public Player p2Player;
-
-    public CentralProcessor getCent()
-    {
-        return CentralProcessor.instance;
-    }
-
-    public int getMoney()
-    {
-        return money;
-    }
-
+    //================================================================================
+    // Monobehaviour functions
+    //================================================================================
     private void Awake()
     {
-        if(PhotonNetwork.IsMasterClient)
-        {
-            isMaster = true;
+        if (PhotonNetwork.IsMasterClient)
             player = p1Player;
-        }
         else
-        {
-            isMaster = false;
             player = p2Player;
-        }
+
         playState = PlayState.ready;
     }
 
@@ -117,33 +124,30 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     {
         GameManager.instance.audioManager.StartGameSceneBGM();
         uIManager.state = UIManager.State.Ready;
-        if(isMaster)
-        {
-            currentTile = P1_core_Tile;
-            currentTile.GetComponent<Tile>().minimap_Tile.color = Color.blue;
-            foreach(GameObject c in currentTile.occBlue)
-            {
-                c.gameObject.SetActive(true);
-            }
-        }
-        else
-        {
-            currentTile = P2_core_Tile;
-            currentTile.GetComponent<Tile>().minimap_Tile.color = Color.red;
-            foreach(GameObject c in currentTile.occRed)
-            {
-                c.gameObject.SetActive(true);
-            }
-        }
-        color = uIManager.errorMessage.color;
-        //tiles = GameObject.FindGameObjectsWithTag("Tile");
-        StartCoroutine(Waiting());
+
+        currentTile = player.GetCoreTile();
+        currentTile.minimap_Tile.color = player.GetPlayerColor();
+        currentTile.ShowOcc(currentTile.GetOccupatedScore());
+
         t = Timer();
     }
 
     private void Update()
     {
-        if(playState == PlayState.play && PhotonNetwork.PlayerList.Length < 2 && isPlay)
+        if(isWaiting)
+        {
+            if (PhotonNetwork.PlayerList.Length > 1)
+            {
+                isWaiting = false;
+                waitingText.text = "Success Matching!";
+                Invoke("Matched", 2.0f);
+            }
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (playState == PlayState.play && PhotonNetwork.PlayerList.Length < 2 && isPlay)
         {
             isPlay = false;
             playState = PlayState.ready;
@@ -151,64 +155,63 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         }
     }
 
-    public void CurrentUnitNull()
+    // functions
+    #region
+    private void Matched()
     {
-        if(currentUnit != null)
-        {
-            currentUnit.particleSystem.Clear();
-            currentUnit.particleSystem.gameObject.SetActive(false);
-            currentUnit = null;
-        }
+        playState = PlayState.play;
+        uIManager.state = UIManager.State.Idle;
+        UT.SetActive(waitingPanel, false);
+        UT.SetActive(cloud.gameObject, true);
     }
 
-    public void Exit()
+    public int GetMoney()
     {
-        photonView.RPC("ExitRPC", RpcTarget.Others);
-        PhotonNetwork.LeaveRoom();
-        SceneManager.LoadScene(0);
+        return money;
+    }
+
+    public void SetMoney(int m)
+    {
+        money = m;
+        currentMoney.text = money.ToString();
     }
 
     public void StartTimer()
     {
         t = Timer();
-        timer.gameObject.SetActive(true);
+        UT.SetActive(timer, true);
         StartCoroutine(t);
     }
 
     public void StopTimer()
     {
         StopCoroutine(t);
-        timer.gameObject.SetActive(false);
+        UT.SetActive(timer, false);
     }
 
-    IEnumerator Waiting()
+    public bool CheckUnitsActiveCost()
     {
-        while(true)
+        MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
+        foreach (MyUnit unit in units)
         {
-            if(PhotonNetwork.PlayerList.Length > 1)
-            {
-                waitingText.text = "Success Matching!";
-                playState = PlayState.play; 
-                yield return new WaitForSeconds(2);
-                uIManager.state = UIManager.State.Idle;
-                waitingPanel.gameObject.SetActive(false);
-                cloud.gameObject.SetActive(true);
-                break;
-            }
-            yield return null;
+            if (unit.gameObject.layer == player.GetLayer() && unit.activeCost > 0)
+                return true;
         }
+        return false;
     }
+    #endregion
 
+    // Coroutine
     IEnumerator Timer()
     {
         selectCount = time;
-        while(true)
+        while (true)
         {
-            if(Mathf.Floor(selectCount) <= 0) 
+            if (Mathf.Floor(selectCount) <= 0)
             {
                 break;
-            } 
-            else 
+            }
+            else
             {
                 selectCount -= Time.deltaTime;
                 timer.text = Mathf.Floor(selectCount).ToString();
@@ -218,68 +221,57 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         AddTurnNumber();
     }
 
-    public void UnitReset()
+    // RPC call functions
+    #region
+    public void Exit()
     {
-        CurrentUnitNull();
-        currentEnemy = null;
-        //uIManager.unitInfo_panel.gameObject.SetActive(false);
-        uIManager.CloseUnitInfo();
-        uIManager.unitButtonPanel.gameObject.SetActive(false);
+        photonView.RPC("ExitRPC", RpcTarget.Others);
+        PhotonNetwork.LeaveRoom();
+        SceneManager.LoadScene(0);
     }
+    #endregion
 
-    public void BuildingReset()
-    {
-        currentBuilding = null;
-        foreach(Image i in uIManager.buildingLevels)
-        {
-            i.gameObject.SetActive(false);
-        }
-        foreach(Text t in uIManager.buildingEffects)
-        {
-            t.gameObject.SetActive(false);
-        }
-        uIManager.buildingInfo_panel.gameObject.SetActive(false);
-    }
+
     
-    public void GameWin()
-    {
 
-    }
+    
 
-    public void GameLose()
-    {
+    
 
-    }
+    //public void UnitReset()
+    //{
+    //    CurrentUnitNull();
+    //    currentEnemy = null;
+    //    //uIManager.unitInfo_panel.gameObject.SetActive(false);
+    //    uIManager.CloseUnitInfo();
+    //    uIManager.unitButtonPanel.gameObject.SetActive(false);
+    //}
 
-    public bool CheckActiveCost()
-    {
-        bool isCheck = false;
-        if(isMaster)
-        {
-            MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
-            foreach(MyUnit u in units)
-            {
-                if(u.gameObject.layer == 7 && u.activeCost > 0)
-                {
-                    isCheck = true;
-                    return isCheck;
-                }
-            }
-        }
-        else
-        {
-            MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
-            foreach(MyUnit u in units)
-            {
-                if(u.gameObject.layer == 8 && u.activeCost > 0)
-                {
-                    isCheck = true;
-                    return isCheck;
-                }
-            }
-        }
-        return isCheck;
-    }
+    //public void BuildingReset()
+    //{
+    //    currentBuilding = null;
+    //    foreach(Image i in uIManager.buildingLevels)
+    //    {
+    //        i.gameObject.SetActive(false);
+    //    }
+    //    foreach(Text t in uIManager.buildingEffects)
+    //    {
+    //        t.gameObject.SetActive(false);
+    //    }
+    //    uIManager.buildingInfo_panel.gameObject.SetActive(false);
+    //}
+    
+    //public void GameWin()
+    //{
+
+    //}
+
+    //public void GameLose()
+    //{
+
+    //}
+
+    
 
     public bool CheckDecision()
     {
@@ -322,7 +314,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
                 uIManager.ShowCheckWindow(s);
                 return;
             }
-            else if(CheckActiveCost())
+            else if(CheckUnitsActiveCost())
             {
                 string s = "행동력이 남은 유닛이 있습니다.^^";
                 uIManager.ShowCheckWindow(s);
@@ -520,7 +512,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     {
         foreach(Tile t in tiles)
         {
-            t.GiveMoney();
+            t.GetTileMoney();
             if((t.occupationCost >= 3 && t.isP1Tile) || (t.occupationCost <= -3 && t.isP2Tile))
             {
                 if(t.isP1Tile)

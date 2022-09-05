@@ -23,7 +23,7 @@ namespace Status
 
         public void setCreatedUnitStatus(GameObject unit)
         {
-            unit.gameObject.layer = CentralProcessor.Instance.player.getLayer();
+            unit.gameObject.layer = CentralProcessor.Instance.player.GetLayer();
 
         }
     }

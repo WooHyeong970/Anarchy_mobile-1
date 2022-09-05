@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class test : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class test : MonoBehaviour
         }
     }
     private static test instance;
+
+    public Text t;
 
     public int num;
 }

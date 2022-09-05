@@ -7,6 +7,9 @@ using System;
 public class Player
 {
     [SerializeField]
+    private Tile coreTile;
+
+    [SerializeField]
     private Transform cam_start_point;
 
     [SerializeField]
@@ -21,8 +24,15 @@ public class Player
     [SerializeField]
     private int layer;
 
+    [SerializeField]
+    private Color color;
+
     bool[] is_exists = new bool[3];
-    
+
+    public Tile GetCoreTile()
+    {
+        return coreTile;
+    }
 
     public Transform getCamPoint()
     {
@@ -44,18 +54,23 @@ public class Player
         return quaternion;
     }
 
-    public bool getIsExist(int num)
+    public bool IsUnitExist(int num)
     {
         return is_exists[num];
     }
 
-    public void setIsExist(int num, bool check)
+    public void SetIsUnitExist(int num, bool check)
     {
         is_exists[num] = check;
     }
 
-    public LayerMask getLayer()
+    public LayerMask GetLayer()
     {
         return layer;
+    }
+
+    public Color GetPlayerColor()
+    {
+        return color;
     }
 }

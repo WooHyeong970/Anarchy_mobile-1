@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    public Camera       GameCamera;
+    public Camera       gameCamera;
     public float        orthoZoomSpeed = 0.03f;
 
     private void Start()
@@ -29,16 +29,16 @@ public class CameraManager : MonoBehaviour
 
                 float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
 
-                if(GameCamera.orthographic)
+                if(gameCamera.orthographic)
                 {
-                    GameCamera.orthographicSize += deltaMagnitudeDiff * orthoZoomSpeed;
-                    GameCamera.orthographicSize = Mathf.Max(GameCamera.orthographicSize, 0.1f);
+                    gameCamera.orthographicSize += deltaMagnitudeDiff * orthoZoomSpeed;
+                    gameCamera.orthographicSize = Mathf.Max(gameCamera.orthographicSize, 0.1f);
                 }
 
-                if(GameCamera.orthographicSize < 4)
-                    GameCamera.orthographicSize = 4.1f;
-                else if(GameCamera.orthographicSize > 8)
-                    GameCamera.orthographicSize = 8;
+                if(gameCamera.orthographicSize < 4)
+                    gameCamera.orthographicSize = 4.1f;
+                else if(gameCamera.orthographicSize > 8)
+                    gameCamera.orthographicSize = 8;
             }
         }
     }

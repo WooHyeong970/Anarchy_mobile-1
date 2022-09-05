@@ -240,7 +240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ChooseforcePanel: {fileID: 1369426115}
   ChoosemapPanel: {fileID: 397696584}
-  force_image: {fileID: 1332781913}
+  forceImage: {fileID: 1332781913}
   description: {fileID: 1244005686}
   sDisc: "\uC18C\uC0AC\uC774\uC5B4\uD2F0 \r\n\uD0C0\uACE0\uB09C \u2018\uB9C8\uBC95\u2019\uC744
     \uC0AC\uC6A9\uD558\uB294 \uC138\uB825. \uADF8 \uC2E0\uBE44\uD55C \uD798\uC73C\uB85C

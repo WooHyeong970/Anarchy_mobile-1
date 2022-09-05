@@ -47,9 +47,22 @@ namespace AnarchyUtility
             }
         }
 
-        public string CalculateCost(int cost, int money)
+        public int CalculateCost(int cost, int money)
         {
-            return (money - cost).ToString();
+            return money - cost;
+        }
+
+        public void SetManager(ref UIManager UI, ref CentralProcessor CP, ref VariableManager VM)
+        {
+            UI = CentralProcessor.Instance.uIManager;
+            CP = CentralProcessor.Instance;
+            VM = VariableManager.Instance;
+        }
+
+        public void SetManager(ref UIManager UI, ref CentralProcessor CP)
+        {
+            UI = CentralProcessor.Instance.uIManager;
+            CP = CentralProcessor.Instance;
         }
     }
 }

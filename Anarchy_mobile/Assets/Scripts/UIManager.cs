@@ -57,6 +57,8 @@ public class UIManager : MonoBehaviourPun
     public Image    checkWindow;
     public Text     checkWindowtext;
     public Text     BGMOnOffText;
+    public Text buildingEffect;
+    Color errorMessageColor;
 
     IEnumerator errorMessageCo;
 
@@ -80,6 +82,7 @@ public class UIManager : MonoBehaviourPun
             exitButton.gameObject.SetActive(false);
         }
         errorMessageCo = fadeoutErrorMessage();
+        errorMessageColor = errorMessage.color;
     }
 
     private void Update()
@@ -522,9 +525,13 @@ public class UIManager : MonoBehaviourPun
         }
     }
 
+    //====================================================================================
+
+    //====================================================================================
+
     IEnumerator fadeoutErrorMessage()
     {
-        Color fadecolor = CentralProcessor.Instance.color;
+        Color fadecolor = errorMessageColor;
         time = 0f;
         fadecolor.a = Mathf.Lerp(start, end, time);
         while (fadecolor.a > 0f)
@@ -549,7 +556,7 @@ public class UIManager : MonoBehaviourPun
     public void ShowUnitInfo(MyUnit unit)
     {
         utility.SetActive(unitInfo_panel, true);
-        unit_name.text = unit.gameObject.name;
+        unit_name.text = unit.unitName;
         unit_activeCost.text = unit.cost.ToString();
         unit_illust.sprite = unit.illust;
         unit_ATK.text = unit.offensive.ToString();
@@ -562,12 +569,46 @@ public class UIManager : MonoBehaviourPun
     public void CloseUnitInfo()
     {
         utility.SetActive(unitInfo_panel, false);
+        utility.SetActive(unitButtonPanel, false);
+        CentralProcessor.Instance.currentUnit = null;
         resetUnitHPBar();
     }
 
-    public void resetUnitHPBar()
+    public void ShowBuildingInfo(MyBuilding building)
+    {
+        utility.SetActive(buildingInfo_panel, true);
+        buildingName.text = building.name;
+        buildingIllust.sprite = building.illust;
+
+        for (int i = 0; i < building.level; i++)
+            utility.SetActive(buildingLevels[i], true);
+
+        buildingEffect.text = building.desc;
+    }
+
+    public void CloseBuildingInfo()
+    {
+        utility.SetActive(buildingInfo_panel, false);
+        resetBuildingLevel();
+    }
+
+    private void resetUnitHPBar()
     {
         foreach (Image hp in unit_hp)
             utility.SetActive(hp, false);
+    }
+
+    private void resetBuildingLevel()
+    {
+        foreach (Image lv in buildingLevels)
+            utility.SetActive(lv, false);
+    }
+
+    public void OffInOf()
+    {
+        if (CentralProcessor.Instance.currentUnit != null)
+            CentralProcessor.Instance.currentUnit.CloseInfo();
+        if (CentralProcessor.Instance.currentBuilding != null)
+            CentralProcessor.Instance.currentBuilding.CloseInfo();
     }
 }

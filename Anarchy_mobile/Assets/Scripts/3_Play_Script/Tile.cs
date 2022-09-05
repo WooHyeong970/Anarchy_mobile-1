@@ -2,10 +2,10 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using AnarchyUtility;
 
-public class Tile : MonoBehaviourPun, IPointerClickHandler
+public class Tile : MonoBehaviourPun
 {
     public bool isP1Tile = false;
     public bool isP2Tile = false;
@@ -29,110 +29,82 @@ public class Tile : MonoBehaviourPun, IPointerClickHandler
     public Button MoveMapButton;
     public GameObject[] occBlue;
     public GameObject[] occRed;
+    public int gold;
+    int occupatedScore;
 
-    private void Start()
+    Utility             UT = new Utility();
+    UIManager           UI;
+    CentralProcessor    CP;
+
+    public void OnClick()
     {
-        isMaster = CentralProcessor.Instance.isMaster;
+        UT.SetManager(ref UI, ref CP);
+        if (UI.state == UIManager.State.Attack) return;
+
+        UI.OffInOf();
+        MoveTile();
+        if (UI.state == UIManager.State.Idle)
+            UI.InfoWindowReset();
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void GetTileMoney()
     {
-        if(CentralProcessor.Instance.uIManager.state == UIManager.State.Idle)
+        if(this.gameObject.layer == CP.player.GetLayer())
         {
-            if(this.gameObject != CentralProcessor.Instance.currentTile.gameObject)
-            {
-                MoveTile();
-                CentralProcessor.Instance.uIManager.InfoWindowReset();
-            }
-        }
-        else if(CentralProcessor.Instance.uIManager.state == UIManager.State.Next)
-        {
-            if(this.gameObject != CentralProcessor.Instance.currentTile.gameObject)
-            {
-                MoveTile();
-            }
-        }   
-    }
-
-    public void GiveMoney()
-    {
-        if(isMaster && isP1CoreTile)
-        {
-            int currentMoney = int.Parse(CentralProcessor.Instance.currentMoney.text);
-            currentMoney += money;
-            CentralProcessor.Instance.currentMoney.text = currentMoney.ToString();
-            CentralProcessor.Instance.SumMoney(money,0);
-            return;
-        }
-        else if(!isMaster && isP2CoreTile)
-        {
-            int currentMoney = int.Parse(CentralProcessor.Instance.currentMoney.text);
-            currentMoney += money;
-            CentralProcessor.Instance.currentMoney.text = currentMoney.ToString();
-            CentralProcessor.Instance.SumMoney(0,money);
-            return;
-        }
-
-        if(isMaster && isP1Tile)
-        {
-            int currentMoney = int.Parse(CentralProcessor.Instance.currentMoney.text);
-            currentMoney += money;
-            CentralProcessor.Instance.currentMoney.text = currentMoney.ToString();
-            CentralProcessor.Instance.SumMoney(money,0);
-        }
-        else if(!isMaster && isP2Tile)
-        {
-            int currentMoney = int.Parse(CentralProcessor.Instance.currentMoney.text);
-            currentMoney += money;
-            CentralProcessor.Instance.currentMoney.text = currentMoney.ToString();
-            CentralProcessor.Instance.SumMoney(0,money);
+            int money = CP.GetMoney() + gold;
+            CP.SetMoney(money);
         }
     }
 
     public void MoveTile()
     {
-        CentralProcessor.Instance.currentTile.DisappearOcc();
-        CentralProcessor.Instance.cameraManager.transform.position = cameraPoint.position;
-        CentralProcessor.Instance.currentTile.minimap_Tile.color = Color.white;
-        CentralProcessor.Instance.currentTile = this.gameObject.GetComponent<Tile>();
-        CentralProcessor.Instance.currentTile.ShowOcc();
-        if(isMaster)
-        {
-            this.minimap_Tile.color = Color.blue;
-        }
-        else
-        {
-            this.minimap_Tile.color = Color.red;
-        }
+        CP.currentTile.DisappearOcc();
+        CP.cameraManager.transform.position = cameraPoint.position;
+        CP.currentTile.minimap_Tile.color = CP.minimapNormalColor;
+        CP.currentTile = this.gameObject.GetComponent<Tile>();
+        CP.currentTile.ShowOcc();
+        this.minimap_Tile.color = CP.player.GetPlayerColor();
     }
 
     public void DisappearOcc()
     {
-        foreach(GameObject o in occBlue)
-        {
-            o.gameObject.SetActive(false);
-        }
-        foreach(GameObject o in occRed)
-        {
-            o.gameObject.SetActive(false);
-        }
+        foreach (GameObject o in occBlue)
+            UT.SetActive(o, false);
+
+        foreach (GameObject o in occRed)
+            UT.SetActive(o, false);
     }
 
     public void ShowOcc()
     {
-        if(occupationCost > 0)
+        if (occupationCost > 0)
         {
-            for(int i = 0; i < occupationCost; i++)
-            {
-                occBlue[i].gameObject.SetActive(true);
-            }
+            for (int i = 0; i < occupationCost; i++)
+                UT.SetActive(occBlue[i], true);
         }
-        else if(occupationCost < 0)
+        else if (occupationCost < 0)
         {
-            for(int i = 0; i < -(occupationCost); i++)
-            {
-                occRed[i].gameObject.SetActive(true);
-            }
+            for (int i = 0; i < -(occupationCost); i++)
+                UT.SetActive(occRed[i], true);
         }
+    }
+
+    public void ShowOcc(int score)
+    {
+        if (occupationCost > 0)
+        {
+            for (int i = 0; i < score; i++)
+                UT.SetActive(occBlue[i], true);
+        }
+        else if (occupationCost < 0)
+        {
+            for (int i = 0; i < -(score); i++)
+                UT.SetActive(occRed[i], true);
+        }
+    }
+
+    public int GetOccupatedScore()
+    {
+        return occupatedScore;
     }
 }

@@ -16,7 +16,7 @@ public class Cloud : MonoBehaviour
     {
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Idle"))
         {
-            if (CentralProcessor.Instance.isMaster)
+            if (CentralProcessor.Instance.player.GetLayer() == 7)
             {
                 CentralProcessor.Instance.uIManager.SetIdleState();
                 CentralProcessor.Instance.StartTimer();

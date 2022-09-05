@@ -9,13 +9,14 @@ public class MyUnit : MonoBehaviourPun
     public int              type;
     public int              cost;
     public int              hp;
+    public int activeCost;
     public Sprite           illust;
-    public int              activeCost;
+    
     public int              accDamage = 0;
-    public string           unit_name;
-    public int              myNum;
+    public string           unitName;
     public int              defensive;
     public int              offensive;
+    public int myNum;
 
     public Tile             currentTile;
     public bool             isAttackready = false;
@@ -25,17 +26,17 @@ public class MyUnit : MonoBehaviourPun
 
     bool                    isClicked;
 
-    Utility UT = new Utility();
-    UIManager UI = CentralProcessor.Instance.uIManager;
-    CentralProcessor CP;
-
-    private void Update()
-    {
-        CP = CentralProcessor.Instance;
-    }
+    Utility                 UT = new Utility();
+    UIManager               UI;
+    CentralProcessor        CP;
+    VariableManager         VM;
 
     public void OnClick()
     {
+        UT.SetManager(ref UI, ref CP);
+        if (CP.currentBuilding != null)
+            CP.currentBuilding.CloseInfo();
+
         if (isClicked)
         {
             CloseInfo();
@@ -59,7 +60,7 @@ public class MyUnit : MonoBehaviourPun
 
     private void Ready()
     {
-        if (this.gameObject.layer == CP.player.getLayer())
+        if (this.gameObject.layer == CP.player.GetLayer())
         {
             StartParticle();
             UT.SetActive(UI.unitButtonPanel, true);
@@ -85,7 +86,7 @@ public class MyUnit : MonoBehaviourPun
 
     private void Attack()
     {
-        if (this.gameObject.layer == CP.player.getLayer())
+        if (this.gameObject.layer == CP.player.GetLayer())
             return;
 
         CP.Attact(CP.currentUnit.GetComponent<PhotonView>().ViewID, this.gameObject.GetComponent<PhotonView>().ViewID);
@@ -105,16 +106,17 @@ public class MyUnit : MonoBehaviourPun
 
     public void ActiveCostUpdate()
     {
+        VM = VariableManager.Instance;
         switch (type)
         {
             case 1:
-                activeCost = VariableManager.Instance.war_act;
+                activeCost = VM.war_act;
                 break;
             case 2:
-                activeCost = VariableManager.Instance.arc_act;
+                activeCost = VM.arc_act;
                 break;
             case 3:
-                activeCost = VariableManager.Instance.mag_act;
+                activeCost = VM.mag_act;
                 break;
         }
     }

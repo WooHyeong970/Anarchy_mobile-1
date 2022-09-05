@@ -1,40 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
+using AnarchyUtility;
 
-public class MyBuilding : MonoBehaviour, IPointerClickHandler
+public class MyBuilding : MonoBehaviour
 {
-    public int type;
     public int level;
-    public bool isP1Building;
-    public bool isP2Building;
-    bool isMaster;
     [TextArea]
     public string desc;
     public string buildingName;
     public Sprite illust;
+    
+    bool isClicked;
+    Utility UT = new Utility();
+    UIManager UI;
+    CentralProcessor CP;
 
-    private void Start()
+    public void OnClick()
     {
-        isMaster = CentralProcessor.Instance.isMaster;
+        UT.SetManager(ref UI, ref CP);
+        if (CP.currentUnit != null)
+            CP.currentUnit.CloseInfo();
+
+        if(isClicked)
+        {
+            isClicked = false;
+            CloseInfo();
+            return;
+        }
+
+        if(CP.currentBuilding != null)
+            CP.currentBuilding.CloseInfo();
+
+        CP.currentBuilding = this.gameObject.GetComponent<MyBuilding>();
+        UI.ShowBuildingInfo(this.gameObject.GetComponent<MyBuilding>());
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void CloseInfo()
     {
-        if(CentralProcessor.Instance.uIManager.state == UIManager.State.Idle || CentralProcessor.Instance.uIManager.state == UIManager.State.Next)
-        {
-            if(CentralProcessor.Instance.currentBuilding != this.gameObject.GetComponent<MyBuilding>())
-            {
-                CentralProcessor.Instance.BuildingReset();
-                CentralProcessor.Instance.currentBuilding = this.gameObject.GetComponent<MyBuilding>();
-                CentralProcessor.Instance.uIManager.ShowBuildingInfo(buildingName, illust, level, type);
-            }
-            else
-            {
-                CentralProcessor.Instance.uIManager.InfoWindowReset();
-            }
-        }
+        isClicked = false;
+        UI.CloseBuildingInfo();
     }
 }

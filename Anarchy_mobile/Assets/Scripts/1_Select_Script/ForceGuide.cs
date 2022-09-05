@@ -9,7 +9,7 @@ public class ForceGuide : MonoBehaviour
     public enum forceNum2 { SOCIETY, NEW_WAVE, MAFIA };
     public Image    ChooseforcePanel;
     public Image    ChoosemapPanel;
-    public Image    force_image;
+    public Image    forceImage;
     public Text     description;
 
     int             enterWidth = 410;
@@ -55,11 +55,8 @@ public class ForceGuide : MonoBehaviour
             selected = true;
             nextButton.GetComponent<Button>().interactable = true;
             btn.GetComponent<RectTransform>().sizeDelta = new Vector2(enterWidth, enterHeight);
-            force_image.gameObject.SetActive(true);
+            forceImage.gameObject.SetActive(true);
             description.text = disc;
-            //GameManager.instance.playerData.forceNumber = num;
-            //GameManager.instance.playerData.setForceNumber(num);
-            //GameManager.instance.playerData.setForceName(name);
             GameManager.instance.playerData.setForceInfo(num, name);
             GameManager.instance.SaveDataToJson();
         }
@@ -79,7 +76,7 @@ public class ForceGuide : MonoBehaviour
     {
         selected = false;
         btn.GetComponent<RectTransform>().sizeDelta = new Vector2(exitWidth, exitHeight);
-        force_image.gameObject.SetActive(false);
+        forceImage.gameObject.SetActive(false);
     }
 
     private void SelectPanel(Image curPanel, Image nextPanel)

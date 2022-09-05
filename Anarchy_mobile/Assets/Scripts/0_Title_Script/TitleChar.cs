@@ -12,7 +12,7 @@ public class TitleChar : MonoBehaviour
     float           start = 0f;
     float           end = 1f;
     float           time;
-    float           FadeTime = 1f;
+    float           fadeTime = 1f;
 
     [SerializeField]
     bool            fade = false;
@@ -38,7 +38,7 @@ public class TitleChar : MonoBehaviour
             }
             if (imageColor.a < 1f)
             {
-                time += Time.deltaTime / FadeTime;
+                time += Time.deltaTime / fadeTime;
                 imageColor.a = Mathf.Lerp(start, end, time);
                 images[idx].color = imageColor;
             }
@@ -68,7 +68,7 @@ public class TitleChar : MonoBehaviour
             }
             if (imageColor.a > 0f)
             {
-                time += Time.deltaTime / FadeTime;
+                time += Time.deltaTime / fadeTime;
                 imageColor.a = Mathf.Lerp(end, start, time);
                 images[idx].color = imageColor;
             }
