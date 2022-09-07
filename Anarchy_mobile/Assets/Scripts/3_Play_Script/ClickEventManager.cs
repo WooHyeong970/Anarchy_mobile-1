@@ -15,7 +15,7 @@ public class ClickEventManager : MonoBehaviour
             string tagName = IsPointerOverUIObject();
             if (tagName == "UI" || tagName == "Window")
             {
-                CentralProcessor.Instance.uIManager.OffInOf();
+                CentralProcessor.Instance.UI.OffInOf();
                 return;
             }
 

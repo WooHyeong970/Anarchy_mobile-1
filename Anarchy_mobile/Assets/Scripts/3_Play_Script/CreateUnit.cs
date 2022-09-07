@@ -17,6 +17,7 @@ public class CreateUnit : MonoBehaviourPunCallbacks
     string              forceName;
 
     StatusManager       statusManager = new StatusManager();
+    Player              player = CentralProcessor.Instance.GetPlayer();
     Utility             UT = new Utility();
     UIManager           UI;
     CentralProcessor    CP;
@@ -37,7 +38,7 @@ public class CreateUnit : MonoBehaviourPunCallbacks
     {
         UT.SetManager(ref UI, ref CP, ref VM);
 
-        if(CP.createUnitNumber <= 0)
+        if(CP.GetUnitCnt() <= 0)
         {
             UI.fadeOutErrorMessage("소환 횟수 초과");
             return;
@@ -51,16 +52,17 @@ public class CreateUnit : MonoBehaviourPunCallbacks
 
         for(int i = 0; i < 3; i++)
         {
-            if(!CP.player.IsUnitExist(i))
+            if(!player.GetCoreTile().GetCheckPos(i, player.GetLayer()))
             {
                 CP.effectSoundManager.PlayButtonClickSound();
-                CP.SetMoney(UT.CalculateCost(CP.GetMoney(), unitCosts[type - 1]));
+                CP.SetMoney(CP.GetMoney() - unitCosts[type - 1]);
 
                 GameObject unit = InstantiateUnit(type, i);
                 CP.SumScore(1, 0);
                 CP.SumUnit(1, 0);
-                CP.createUnitNumber -= 1;
-                CP.player.SetIsUnitExist(i, true);
+                CP.SetUnitCnt();
+                player.GetCoreTile().SetCheckPos(i, true, player.GetLayer());
+
                 if (VM.isUnitCostEffect && VM.UnitEffects.Count == 0)
                 {
                     VM.isUnitCostEffect = false;
@@ -83,7 +85,7 @@ public class CreateUnit : MonoBehaviourPunCallbacks
 
     GameObject InstantiateUnit(int type, int area)
     {
-        GameObject unit = PhotonNetwork.Instantiate(forceName + "_TYPE" + type.ToString(), CP.player.getUnitArea(area).position, Quaternion.Euler(0, CP.player.getQuaternioin(), 0)) as GameObject;
+        GameObject unit = PhotonNetwork.Instantiate(forceName + "_TYPE" + type.ToString(), player.GetUnitArea(area).position, Quaternion.Euler(0, player.GetQuaternioin(), 0)) as GameObject;
         statusManager.setCreatedUnitStatus(unit);
         return unit;
     }

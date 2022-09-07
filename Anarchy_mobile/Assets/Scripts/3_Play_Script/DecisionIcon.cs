@@ -8,6 +8,7 @@ public class DecisionIcon : MonoBehaviour, IPointerClickHandler
     public bool isP1Decision = false;
     public bool isP2Decision = false;
     public Tile thisTile;
+    public int layer;
 
     public void OnPointerClick(PointerEventData eventData)
     {

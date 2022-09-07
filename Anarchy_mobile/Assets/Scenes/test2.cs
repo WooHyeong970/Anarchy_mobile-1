@@ -7,13 +7,13 @@ public class test2 : MonoBehaviour
 {
     private void Start()
     {
-        StartCoroutine(TestCo());
+        //StartCoroutine(TestCo());
     }
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
-            StartCoroutine(TestCo());
+            TestFunc();
     }
 
     IEnumerator TestCo()
@@ -28,5 +28,14 @@ public class test2 : MonoBehaviour
         }
         yield return null;
         Debug.Log("End Coroutine");
+    }
+
+    void TestFunc()
+    {
+        //Debug.Log("Function Call");
+        //Debug.Log(test.Instance.layerMask.);
+        //Debug.Log(this.gameObject.layer.ToString());
+        //if (test.Instance.layerMask == this.gameObject.layer)
+            //Debug.Log("is Same Layer");
     }
 }

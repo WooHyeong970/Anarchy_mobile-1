@@ -16,14 +16,14 @@ public class Cloud : MonoBehaviour
     {
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Idle"))
         {
-            if (CentralProcessor.Instance.player.GetLayer() == 7)
+            if (CentralProcessor.Instance.GetPlayer().GetLayer() == 7)
             {
-                CentralProcessor.Instance.uIManager.SetIdleState();
+                CentralProcessor.Instance.UI.SetIdleState();
                 CentralProcessor.Instance.StartTimer();
             }
             else
             {
-                CentralProcessor.Instance.uIManager.SetNextState();
+                CentralProcessor.Instance.UI.SetNextState();
                 CentralProcessor.Instance.StopTimer();
             }
             this.gameObject.SetActive(false);

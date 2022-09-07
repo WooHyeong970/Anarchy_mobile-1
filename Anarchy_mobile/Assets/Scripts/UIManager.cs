@@ -9,220 +9,326 @@ using AnarchyUtility;
 
 public class UIManager : MonoBehaviourPun
 {
-    public Image        ChooseforcePanel;
-    public Image        ChoosemapPanel;
-    public Button       nextButton;
-    public Button       close_window;
-    public GameObject   build_window;
-    public GameObject   exit_window;
-    public GameObject   setting_window;
-    public GameObject   movemap_window;
-    public GameObject   movecameramp_window;
-    public GameObject   unit_window;
-    public GameObject   decision_window;
-    public GameObject   gameover;
+    //public Image        ChooseforcePanel;
+    //public Image        ChoosemapPanel;
+    //public Button       nextButton;
+    //public Button       close_window;
+    //public GameObject   build_window;
+    //public GameObject   exit_window;
+    //public GameObject   setting_window;
+    //public GameObject   movemap_window;
+    //public GameObject   movecameramp_window;
+    //public GameObject   unit_window;
+    //public GameObject   decision_window;
+    //public GameObject   gameover;
     public GameObject[] ui;
-    public Image        s_map; // 작은 지도
-    public Image        b_map; // 이동버튼 눌렀을 때 나오는 큰 지도
-    public Text     money;
-    public Text     errorMessage; // 유닛이나 건물을 생산할 때 재화,자리가 부족하면 나오는 에러메세지
-    float           time;
-    float           start = 1f;
-    float           end = 0f;
-    public float    FadeTime = 1f;
-    GameObject[]    window;
-    public Image    unitInfo_panel;
-    public Image    unit_illust;
-    public Image[]  unit_hp;
-    public Text     unit_activeCost;
-    public Text     unit_name;
-    public Text     HP;
-    public Text     unit_ATK;
-    public Text     unit_DEF;
-    public Image    unitButtonPanel;
-    public Image    buildingInfo_panel;
-    public Text     buildingName;
-    public Image    buildingIllust;
-    public Image[]  buildingLevels;
-    public Text[]   buildingEffects;
+    //public Image        s_map; // 작은 지도
+    //public Image        b_map; // 이동버튼 눌렀을 때 나오는 큰 지도
+    //public Text     money;
+    //public Text     errorMessage; // 유닛이나 건물을 생산할 때 재화,자리가 부족하면 나오는 에러메세지
+    //float           time;
+    //float           start = 1f;
+    //float           end = 0f;
+    //public float    FadeTime = 1f;
+    //GameObject[]    window;
+    //public Image    unitInfo_panel;
+    //public Image    unit_illust;
+    //public Image[]  unit_hp;
+    //public Text     unit_activeCost;
+    //public Text     unit_name;
+    //public Text     HP;
+    //public Text     unit_ATK;
+    //public Text     unit_DEF;
+    //public Image    unitButtonPanel;
+    //public Image    buildingInfo_panel;
+    //public Text     buildingName;
+    //public Image    buildingIllust;
+    //public Image[]  buildingLevels;
+    //public Text[]   buildingEffects;
     public Button[] mapButtons;
-    public Button   move_nextButton;
-    public Image    tile_unitPanel;
-    public Button   offAttackButton;
-    public Image    decision_img;
-    public Text     decision_story;
-    public Text     decision_effect;
-    public Button   exitButton;
-    public Button   settingButton;    
-    public Image    checkWindow;
-    public Text     checkWindowtext;
-    public Text     BGMOnOffText;
-    public Text buildingEffect;
-    Color errorMessageColor;
+    //public Button   move_nextButton;
+    //public Image    tile_unitPanel;
+    //public Button   offAttackButton;
+    //public Image    decision_img;
+    //public Text     decision_story;
+    //public Text     decision_effect;
+    //public Button   exitButton;
+    //public Button   settingButton;    
+    //public Image    checkWindow;
+    //public Text     checkWindowtext;
+    //public Text     BGMOnOffText;
+    //public Text buildingEffect;
 
-    IEnumerator errorMessageCo;
+    //bool isIgnoreCheck;
+    //IEnumerator errorMessageCo;
 
-    Utility utility = new Utility();
+    // variable
+    //================================================================================
+    Utility UT = new Utility();
 
     public enum State { Ready, Next, Idle, Active, Attack, End };
     public State state = State.Idle;
 
-    public VideoPlayer videoPlayer;
+    public Cloud cloud;
 
+    public Image[] unitHP = new Image[3];
+    public Image[] buildingLevels = new Image[3];
+    public Image waitingPanel;
+    public Image unitInfoPanel;
+    public Image unitIllust;
+    public Image unitButtonPanel;
+    public Image buildingInfoPanel;
+    public Image buildingIllust;
+    public Image closeWindow;
+    public Image settingWindow;
+    public Image exitWindow;
+    public Image unitWindow;
+    public Image buildWindow;
+    public Image moveCameraMapWindow;
+    public Image movemapWindow;
+    public Image decisionWindow;
+    public Image gameoverWindow;
+    public Image checkWindow;
+    public Image decisionList;
+
+    public Text curMoney;
+    public Text waitingText;
+    public Text checkTurn;
+    public Text curTurn;
+    public Text errorMessage;
+    public Text unitName;
+    public Text unitActiveCost;
+    public Text unitATK;
+    public Text unitDEF;
+    public Text buildingName;
+    public Text buildingEffect;
+    public Text BGMOnOffText;
+    public Text checkWindowText;
+    public Text timer;
+
+    public Button settingButton;
+    public Button exitButton;
+    public Button unitButton;
+    public Button buildButton;
+    public Button moveMinimapButton;
+    public Button costIgnoreButton;
+    public Button decisionButton;
+    public Button moveButton;
+    public Button currentMoveButton;
+    public Button offAttackButton;
+    public Button BGMOnOffButton;
+
+    Color errorMessageColor = new Color();
+    IEnumerator errorMessageCo;
+
+    float time;
+    float start = 0;
+    float end = 1f;
+    float fadeTime = 1f;
+
+    bool isIgnoreCheck;
+    //================================================================================
+    // functions
+    //================================================================================
+    #region
     private void Start()
     {
-        if(SceneManager.GetActiveScene().name == "1_Select")
-        {
-            nextButton.GetComponent<Button>().interactable = false;
-        }
-        if(SceneManager.GetActiveScene().name == "3_Play")
-        {
-            SetReadyState();
-            settingButton.gameObject.SetActive(false);
-            exitButton.gameObject.SetActive(false);
-        }
+        ButtonBinding();
+        SetReadyState();
         errorMessageCo = fadeoutErrorMessage();
-        errorMessageColor = errorMessage.color;
     }
 
     private void Update()
     {
-        if(Input.GetKey(KeyCode.Escape))
+        if (Input.GetKey(KeyCode.Escape))
         {
-            if(SceneManager.GetActiveScene().name == "0_Title")
+            if (state == State.Idle)
+                ExitButtonClick();
+            else if (state == State.Active)
+                SetIdleState();
+            else if (state == State.Attack)
+                OffReadyAttack();
+        }
+    }
+
+    private void ButtonBinding()
+    {
+        settingButton.onClick.AddListener(() => SettingButtonClick());
+        exitButton.onClick.AddListener(() => ExitButtonClick());
+        unitButton.onClick.AddListener(() => UnitButtonClick());
+        buildButton.onClick.AddListener(() => BuildButtonClick());
+        costIgnoreButton.onClick.AddListener(() => IgnoreActiveCostCheck());
+        moveMinimapButton.onClick.AddListener(() => MinimapButtonClick());
+        decisionButton.onClick.AddListener(() => DecisionButtonClick());
+        moveButton.onClick.AddListener(() => MoveButtonClick());
+        BGMOnOffButton.onClick.AddListener(() => BGMOnOff());
+    }
+
+    public void fadeOutErrorMessage(string mesg)
+    {
+        StopCoroutine(errorMessageCo);
+        errorMessageCo = fadeoutErrorMessage();
+        PrintErrorMessage(mesg);
+        StartCoroutine(errorMessageCo);
+    }
+
+    public void ShowUnitInfo(MyUnit unit)
+    {
+        UT.SetActive(unitInfoPanel, true);
+        unitName.text = unit.unitName;
+        unitActiveCost.text = unit.cost.ToString();
+        unitIllust.sprite = unit.illust;
+        unitATK.text = unit.offensive.ToString();
+        unitDEF.text = unit.defensive.ToString();
+
+        for (int i = 0; i < unit.hp; i++)
+            UT.SetActive(unitHP[i], true);
+    }
+
+    public void CloseUnitInfo()
+    {
+        UT.SetActive(unitInfoPanel, false);
+        UT.SetActive(unitButtonPanel, false);
+        CentralProcessor.Instance.currentUnit = null;
+        ResetUnitHPBar();
+    }
+
+    public void ShowBuildingInfo(MyBuilding building)
+    {
+        UT.SetActive(buildingInfoPanel, true);
+        buildingName.text = building.name;
+        buildingIllust.sprite = building.illust;
+
+        for (int i = 0; i < building.level; i++)
+            UT.SetActive(buildingLevels[i], true);
+
+        buildingEffect.text = building.desc;
+    }
+
+    public void CloseBuildingInfo()
+    {
+        UT.SetActive(buildingInfoPanel, false);
+        ResetBuildingLevel();
+    }
+
+    private void ResetUnitHPBar()
+    {
+        foreach (Image hp in unitHP)
+            UT.SetActive(hp, false);
+    }
+
+    private void ResetBuildingLevel()
+    {
+        foreach (Image lv in buildingLevels)
+            UT.SetActive(lv, false);
+    }
+
+    public void OffInOf()
+    {
+        if (CentralProcessor.Instance.currentUnit != null)
+            CentralProcessor.Instance.currentUnit.CloseInfo();
+        if (CentralProcessor.Instance.currentBuilding != null)
+            CentralProcessor.Instance.currentBuilding.CloseInfo();
+    }
+
+    public bool GetIsIgnoreCheck()
+    {
+        return isIgnoreCheck;
+    }
+
+    public void StartCloudAnimation()
+    {
+        UT.SetActive(waitingPanel, false);
+        UT.SetActive(cloud.gameObject, true);
+    }
+
+    public void IgnoreActiveCostCheck()
+    {
+        isIgnoreCheck = !isIgnoreCheck;
+        if (!isIgnoreCheck)
+            checkTurn.text = "OFF";
+        else
+            checkTurn.text = "ON";
+    }
+
+    private void SettingButtonClick()
+    {
+        SetActiveState();
+        UT.SetActive(closeWindow, true);
+        UT.SetActive(settingWindow, true);
+    }
+
+    private void ExitButtonClick()
+    {
+        SetActiveState();
+        UT.SetActive(closeWindow, true);
+        UT.SetActive(exitWindow, true);
+    }
+
+    private void UnitButtonClick()
+    {
+        SetActiveState();
+        UT.SetActive(closeWindow, true);
+        UT.SetActive(unitWindow, true);
+    }
+
+    private void BuildButtonClick()
+    {
+        SetActiveState();
+        UT.SetActive(closeWindow, true);
+        UT.SetActive(buildWindow, true);
+    }
+
+    private void MinimapButtonClick()
+    {
+        SetActiveState();
+        UT.SetActive(closeWindow, true);
+        UT.SetActive(moveCameraMapWindow, true);
+    }
+
+    private void ShowDecisionEffect()
+    {
+        UT.SetActive(closeWindow, true);
+        UT.SetActive(decisionWindow, true);
+    }
+
+    private void MoveButtonClick()
+    {
+        SetActiveState();
+        UT.SetActive(closeWindow, true);
+        UT.SetActive(movemapWindow, true);
+        UT.SetActive(unitInfoPanel, false);
+        UT.SetActive(unitButtonPanel, false);
+        SearchWay();
+    }
+
+    private void SearchWay()
+    {
+        foreach (Button b in mapButtons)
+        {
+            b.gameObject.GetComponent<MoveUnit>().isChecked = false;
+            b.gameObject.GetComponent<MoveUnit>().checkPoint.gameObject.SetActive(true);
+            b.gameObject.GetComponent<MoveUnit>().isMove = true;
+            int dis = CalculateDistance(CentralProcessor.Instance.currentTile, b.gameObject.GetComponent<MoveUnit>().pairTile);
+            b.gameObject.GetComponent<MoveUnit>().cost = dis;
+            if (dis == 0 || dis > CentralProcessor.Instance.currentUnit.activeCost)
             {
-                Application.Quit();
-            }
-            else if(SceneManager.GetActiveScene().name == "1_Select")
-            {
-                if(ChooseforcePanel.gameObject.activeSelf)
-                {
-                    SceneManager.LoadScene(1);
-                }
-                else
-                {
-                    ChooseforcePanel.gameObject.SetActive(true);
-                    ChoosemapPanel.gameObject.SetActive(false);  
-                }
-            }
-            else if(SceneManager.GetActiveScene().name == "3_Play")
-            {
-                if(state == State.Idle)
-                {
-                    ExitButtonClick();
-                }
-                else if(state == State.Active)
-                {
-                    SetIdleState();
-                }
-                else if(state == State.Attack)
-                {
-                    OffReadyAttack();
-                }
+                b.gameObject.GetComponent<MoveUnit>().checkPoint.gameObject.SetActive(false);
+                b.gameObject.GetComponent<MoveUnit>().isMove = false;
             }
         }
     }
 
-    public void NewgameBtnClick()
+    private int CalculateDistance(Tile current, Tile obj)
     {
-        GameManager.instance.audioManager.ButtonClickSound();
-        SceneManager.LoadScene(2);
+        int dis = 0;
+        int x = Mathf.Abs(current.row - obj.row);
+        int y = Mathf.Abs(current.col - obj.col);
+        dis = x + y;
+        return dis;
     }
 
-    public void ExitGame()
-    {
-        GameManager.instance.audioManager.ButtonClickSound();
-        Application.Quit();
-    }
-
-    public void Tutorial()
-    {
-        GameManager.instance.audioManager.ButtonClickSound();
-        SceneManager.LoadScene(5);
-    }
-
-    public void GoTitle()
-    {
-        SceneManager.LoadScene(1);
-        GameManager.instance.audioManager.ButtonClickSound();
-        // if(GameManager.instance.audioManager.backmusic.clip == GameManager.instance.audioManager.title.clip)
-        // {
-        //     GameManager.instance.audioManager.StartTitleBGM();
-        // }
-    }
-
-    public void Title()
-    {
-        SceneManager.LoadScene(1);
-    }
-
-    public void ShowForcePage()
-    {
-        GameManager.instance.audioManager.ButtonClickSound();
-        ChooseforcePanel.gameObject.SetActive(true);
-        ChoosemapPanel.gameObject.SetActive(false);            
-    }
-
-    public void SelectForce()
-    {
-        GameManager.instance.audioManager.ButtonClickSound();
-        ChooseforcePanel.gameObject.SetActive(false);
-        ChoosemapPanel.gameObject.SetActive(true);
-    }
-
-    public void SettingButtonClick()
-    {
-        SetActiveState();
-        close_window.gameObject.SetActive(true);
-        setting_window.gameObject.SetActive(true);
-    }
-
-    public void ExitButtonClick()
-    {
-        SetActiveState();
-        close_window.gameObject.SetActive(true);
-        exit_window.gameObject.SetActive(true);
-    }
-
-    public void UnitButtonClick()
-    {
-        SetActiveState();
-        close_window.gameObject.SetActive(true);
-        unit_window.gameObject.SetActive(true);
-    }
-
-    public void BuildButtonClick()
-    {
-        SetActiveState();
-        close_window.gameObject.SetActive(true);
-        build_window.gameObject.SetActive(true);
-    }
-
-    public void MinimapButtonClick()
-    {
-        SetActiveState();
-        close_window.gameObject.SetActive(true);
-        movecameramp_window.gameObject.SetActive(true);
-    }
-
-    public void ShowDecisionEffect()
-    {
-        close_window.gameObject.SetActive(true);
-        decision_window.gameObject.SetActive(true);
-    }
-
-    public void MoveButtonClick()
-    {
-        state = State.Active;
-        close_window.gameObject.SetActive(true);
-        movemap_window.gameObject.SetActive(true);
-        unitInfo_panel.gameObject.SetActive(false);
-        unitButtonPanel.gameObject.SetActive(false);
-        UISetActiveFalse();
-        SearchWay();
-    }
-
-    public void SetReadyState()
+    private void SetReadyState()
     {
         state = State.Ready;
         UISetActiveFalse();
@@ -231,19 +337,18 @@ public class UIManager : MonoBehaviourPun
     public void SetIdleState()
     {
         state = State.Idle;
-        SetActiveFalseWindow();
+        WindowSetActiveFalse();
         UISetActiveTrue();
     }
 
-    public void SetActiveState()
+    private void SetActiveState()
     {
         CentralProcessor.Instance.effectSoundManager.PlayButtonClickSound();
         state = State.Active;
         UISetActiveFalse();
-        InfoWindowReset();
     }
 
-    public void SetAttackState()
+    private void SetAttackState()
     {
         state = State.Attack;
         UISetActiveFalse();
@@ -253,138 +358,150 @@ public class UIManager : MonoBehaviourPun
     {
         state = State.End;
         UISetActiveFalse();
-        gameover.gameObject.SetActive(true);
+        WindowSetActiveFalse();
+        gameoverWindow.gameObject.SetActive(true);
     }
 
     public void SetNextState()
     {
         state = State.Next;
         UISetActiveFalse();
-        InfoWindowReset();
+        WindowSetActiveFalse();
     }
 
-    public void SetActiveFalseWindow()
+    private void WindowSetActiveFalse()
     {
-        window = GameObject.FindGameObjectsWithTag("window");
-        foreach(GameObject w in window)
-        {
+        GameObject[] window = GameObject.FindGameObjectsWithTag("window");
+        foreach (GameObject w in window)
             w.gameObject.SetActive(false);
-        }
     }
 
-    public void UISetActiveFalse()
+    private void UISetActiveFalse()
     {
-        foreach(GameObject u in ui)
-        {
+        foreach (GameObject u in ui)
             u.gameObject.SetActive(false);
-        }
     }
 
-    public void UISetActiveTrue()
+    private void UISetActiveTrue()
     {
-        foreach(GameObject u in ui)
-        {
+        foreach (GameObject u in ui)
             u.gameObject.SetActive(true);
-        }
     }
 
-    public void InfoWindowReset()
-    {
-        CentralProcessor.Instance.UnitReset();
-        CentralProcessor.Instance.BuildingReset();
-        VariableManager.Instance.GetComponent<Decision>().decision_list.gameObject.SetActive(false);
-    }
-
-    public void OffMapButtonsCheck()
-    {
-        CentralProcessor.Instance.CurrentUnitNull();
-        foreach(Button b in mapButtons)
-        {
-            b.GetComponent<MoveUnit>().OffCheck();
-        }
-        CentralProcessor.Instance.current_moveButton = null;
-    }
-
-    public void PrintErrorMessage(string s)
+    private void PrintErrorMessage(string s)
     {
         errorMessage.gameObject.SetActive(true);
         errorMessage.text = s;
     }
 
-    public void ShowUnitInfo(int hp, Sprite illust, string name, int cost, int offence, int defence)
+    private void OffMapButtonsCheck()
     {
-        unitInfo_panel.gameObject.SetActive(true);
-        unit_name.text = name;
-        unit_activeCost.text = cost.ToString();
-        unit_illust.sprite = illust;
-        //unit_hp.rectTransform.localScale = new Vector3(c_hp/m_hp,1f,1f);
-        //unit_hp.fillAmount = c_hp / m_hp;
-        //HP.text = Mathf.RoundToInt(c_hp).ToString();
-        for(int i = 0; i < hp; i++)
-        {
-            unit_hp[i].gameObject.SetActive(true);
-        }
-        unit_ATK.text = offence.ToString();
-        unit_DEF.text = defence.ToString();
+        SetIdleState();
+        foreach (Button b in mapButtons)
+            b.GetComponent<MoveUnit>().OffCheck();
+        currentMoveButton = null;
     }
 
-    public void ShowBuildingInfo(string name, Sprite illust, int level, int type)
+    private void ReadyAttack()
     {
-        buildingInfo_panel.gameObject.SetActive(true);
-        buildingName.text = name;
-        buildingIllust.sprite = illust;
-        for(int i = 0; i < level; i++)
+        if (CentralProcessor.Instance.currentUnit.activeCost == 0)
+            return;
+        SetAttackState();
+        unitInfoPanel.gameObject.SetActive(false);
+        unitButtonPanel.gameObject.SetActive(false);
+        offAttackButton.gameObject.SetActive(true);
+    }
+
+    public void OffReadyAttack()
+    {
+        SetIdleState();
+        offAttackButton.gameObject.SetActive(false);
+    }
+
+    private void DecisionButtonClick()
+    {
+        CentralProcessor.Instance.effectSoundManager.PlayButtonClickSound();
+        if (decisionList.gameObject.activeSelf)
+            UT.SetActive(decisionList, false);
+        else
+            UT.SetActive(decisionList, true);
+    }
+
+    private void BGMOnOff()
+    {
+        if (GameManager.instance.audioManager.GetComponent<AudioSource>().volume == 1)
         {
-            buildingLevels[i].gameObject.SetActive(true);
+            BGMOnOffText.text = "OFF";
+            GameManager.instance.audioManager.GetComponent<AudioSource>().volume = 0;
         }
-        switch(type)
+        else
         {
-            case 1:
-            for(int i = 0; i < level; i++)
-            {
-                buildingEffects[i].gameObject.SetActive(true);
-            }
-            break;
-            case 2:
-            for(int i = 3; i < (level + 3); i++)
-            {
-                buildingEffects[i].gameObject.SetActive(true);
-            }
-            break;
-            case 3:
-            for(int i = 6; i < (level + 6); i++)
-            {
-                buildingEffects[i].gameObject.SetActive(true);
-            }
-            break;
+            BGMOnOffText.text = "ON";
+            GameManager.instance.audioManager.GetComponent<AudioSource>().volume = 1;
         }
     }
 
-    public void SearchWay()
+    public void ShowCheckWindow(string s)
     {
-        foreach(Button b in mapButtons)
+        if (checkWindow.gameObject.activeSelf)
         {
-            b.gameObject.GetComponent<MoveUnit>().isChecked = false;
-            b.gameObject.GetComponent<MoveUnit>().checkPoint.gameObject.SetActive(true);
-            b.gameObject.GetComponent<MoveUnit>().isMove = true;
-            int dis = CalculateDistance(CentralProcessor.Instance.currentTile, b.gameObject.GetComponent<MoveUnit>().pairTile);
-            b.gameObject.GetComponent<MoveUnit>().cost = dis;
-            if(dis == 0 || dis > CentralProcessor.Instance.currentUnit.activeCost)
-            {
-                b.gameObject.GetComponent<MoveUnit>().checkPoint.gameObject.SetActive(false);
-                b.gameObject.GetComponent<MoveUnit>().isMove = false;
-            }
+            CentralProcessor.Instance.effectSoundManager.PlayButtonClickSound();
+            SetIdleState();
+            checkWindow.gameObject.SetActive(false);
+        }
+        else
+        {
+            SetActiveState();
+            checkWindow.gameObject.SetActive(true);
+            checkWindowText.text = s;
         }
     }
 
-    public int CalculateDistance(Tile current, Tile obj)
+    public void ExitGame()
     {
-        int dis = 0;
-        int x = Mathf.Abs(current.row - obj.row);
-        int y = Mathf.Abs(current.col - obj.col);
-        dis = x + y;
-        return dis;
+        GameManager.instance.audioManager.ButtonClickSound();
+        Application.Quit();
     }
+    #endregion
+    //================================================================================
+    // coroutine
+    //================================================================================
+
+    //================================================================================
+    IEnumerator fadeoutErrorMessage()
+    {
+        Color fadecolor = errorMessageColor;
+        time = 0f;
+        fadecolor.a = Mathf.Lerp(start, end, time);
+        while (fadecolor.a > 0f)
+        {
+            time += Time.deltaTime / fadeTime;
+            fadecolor.a = Mathf.Lerp(start, end, time);
+            errorMessage.color = fadecolor;
+            yield return null;
+        }
+        errorMessage.gameObject.SetActive(false);
+        StopCoroutine(fadeoutErrorMessage());
+    }
+    //================================================================================
+
+
+    
+
+    
+
+    public VideoPlayer videoPlayer;
+
+    
+
+    
+
+    
+
+
+    
+
+    
 
     
 
@@ -442,7 +559,7 @@ public class UIManager : MonoBehaviourPun
                 CentralProcessor.Instance.ApplyUnitCurrentTile(CentralProcessor.Instance.currentUnit.GetComponent<PhotonView>().ViewID, CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.GetComponent<PhotonView>().ViewID);
                 //CentralProcessor.Instance.currentUnit.activeCost -= CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().cost;
                 CentralProcessor.Instance.ApplyUnitActiveCost(CentralProcessor.Instance.currentUnit.GetComponent<PhotonView>().ViewID, -CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().cost);
-                CentralProcessor.Instance.CurrentUnitNull();
+                //CentralProcessor.Instance.CurrentUnitNull();
                 CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().ChangeColor(Color.black);
                 CentralProcessor.Instance.current_moveButton = null;
                 CentralProcessor.Instance.uIManager.SetIdleState();
@@ -453,162 +570,13 @@ public class UIManager : MonoBehaviourPun
         }
     }
 
-    public void ReadyAttack()
-    {
-        if(CentralProcessor.Instance.currentUnit.activeCost  == 0)
-        {
-            return;
-        }
-        SetAttackState();
-        unitInfo_panel.gameObject.SetActive(false);
-        unitButtonPanel.gameObject.SetActive(false);
-        CentralProcessor.Instance.currentUnit.isAttackready = true;
-        offAttackButton.gameObject.SetActive(true);
-    }
+    
 
-    public void OffReadyAttack()
-    {
-        if(state != State.Next)
-        {
-            if(CentralProcessor.Instance.currentUnit != null)
-            {
-                CentralProcessor.Instance.currentUnit.isAttackready = false;
-                CentralProcessor.Instance.CurrentUnitNull();
-            }
-            SetIdleState();
-            offAttackButton.gameObject.SetActive(false);
-            InfoWindowReset();
-        }
-    }
+    
 
-    public void DecisionButtonClick()
-    {
+    
 
-        if(VariableManager.Instance.GetComponent<Decision>().decision_list.gameObject.activeSelf == true)
-        {
-            VariableManager.Instance.GetComponent<Decision>().decision_list.gameObject.SetActive(false);
-        }
-        else
-        {
-            VariableManager.Instance.GetComponent<Decision>().decision_list.gameObject.SetActive(true);
-        }
-        CentralProcessor.Instance.effectSoundManager.PlayButtonClickSound();
-    }
+    
 
-    public void BGMOnOff()
-    {
-        if(GameManager.instance.audioManager.GetComponent<AudioSource>().volume == 1)
-        {
-            BGMOnOffText.text = "OFF";
-            GameManager.instance.audioManager.GetComponent<AudioSource>().volume = 0;
-        }
-        else
-        {
-            BGMOnOffText.text = "ON";
-            GameManager.instance.audioManager.GetComponent<AudioSource>().volume = 1;
-        }
-    }
-
-    public void ShowCheckWindow(string s)
-    {
-        if(checkWindow.gameObject.activeSelf)
-        {
-            CentralProcessor.Instance.effectSoundManager.PlayButtonClickSound();
-            SetIdleState();
-            checkWindow.gameObject.SetActive(false);
-        }
-        else
-        {
-            SetActiveState();
-            checkWindow.gameObject.SetActive(true);
-            checkWindowtext.text = s;
-        }
-    }
-
-    //====================================================================================
-
-    //====================================================================================
-
-    IEnumerator fadeoutErrorMessage()
-    {
-        Color fadecolor = errorMessageColor;
-        time = 0f;
-        fadecolor.a = Mathf.Lerp(start, end, time);
-        while (fadecolor.a > 0f)
-        {
-            time += Time.deltaTime / FadeTime;
-            fadecolor.a = Mathf.Lerp(start, end, time);
-            errorMessage.color = fadecolor;
-            yield return null;
-        }
-        errorMessage.gameObject.SetActive(false);
-        StopCoroutine(fadeoutErrorMessage());
-    }
-
-    public void fadeOutErrorMessage(string mesg)
-    {
-        StopCoroutine(errorMessageCo);
-        errorMessageCo = fadeoutErrorMessage();
-        PrintErrorMessage(mesg);
-        StartCoroutine(errorMessageCo);
-    }
-
-    public void ShowUnitInfo(MyUnit unit)
-    {
-        utility.SetActive(unitInfo_panel, true);
-        unit_name.text = unit.unitName;
-        unit_activeCost.text = unit.cost.ToString();
-        unit_illust.sprite = unit.illust;
-        unit_ATK.text = unit.offensive.ToString();
-        unit_DEF.text = unit.defensive.ToString();
-
-        for (int i = 0; i < unit.hp; i++)
-            utility.SetActive(unit_hp[i], true);
-    }
-
-    public void CloseUnitInfo()
-    {
-        utility.SetActive(unitInfo_panel, false);
-        utility.SetActive(unitButtonPanel, false);
-        CentralProcessor.Instance.currentUnit = null;
-        resetUnitHPBar();
-    }
-
-    public void ShowBuildingInfo(MyBuilding building)
-    {
-        utility.SetActive(buildingInfo_panel, true);
-        buildingName.text = building.name;
-        buildingIllust.sprite = building.illust;
-
-        for (int i = 0; i < building.level; i++)
-            utility.SetActive(buildingLevels[i], true);
-
-        buildingEffect.text = building.desc;
-    }
-
-    public void CloseBuildingInfo()
-    {
-        utility.SetActive(buildingInfo_panel, false);
-        resetBuildingLevel();
-    }
-
-    private void resetUnitHPBar()
-    {
-        foreach (Image hp in unit_hp)
-            utility.SetActive(hp, false);
-    }
-
-    private void resetBuildingLevel()
-    {
-        foreach (Image lv in buildingLevels)
-            utility.SetActive(lv, false);
-    }
-
-    public void OffInOf()
-    {
-        if (CentralProcessor.Instance.currentUnit != null)
-            CentralProcessor.Instance.currentUnit.CloseInfo();
-        if (CentralProcessor.Instance.currentBuilding != null)
-            CentralProcessor.Instance.currentBuilding.CloseInfo();
-    }
+    
 }

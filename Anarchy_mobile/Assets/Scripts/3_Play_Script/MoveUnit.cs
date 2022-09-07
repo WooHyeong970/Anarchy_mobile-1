@@ -63,6 +63,6 @@ public class MoveUnit : MonoBehaviour
     public void MoveCamera()
     {
         pairTile.MoveTile();
-        CentralProcessor.Instance.uIManager.SetIdleState();
+        CentralProcessor.Instance.UI.SetIdleState();
     }
 }

@@ -3,7 +3,7 @@ using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+//using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 using AnarchyUtility;
@@ -22,91 +22,104 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
 
     private static CentralProcessor instance;
     public CameraManager    cameraManager;
-    public UIManager        uIManager;
+    public UIManager        UI;
     public EffectSoundManager   effectSoundManager;
-    public Text             whoseTurn;
-    public Text             currentTurn;
-    public bool             isMaster;
-    public int              turn_Number = 0;
-    
-    public MyUnit           currentUnit;
-    public MyUnit           currentEnemy;
-    public MyBuilding       currentBuilding;
-    public Tile             P1_core_Tile;
-    public Tile             P2_core_Tile;
+    //public Text             whoseTurnText;
+    //public Text             currentTurn;
+    //public bool             isMaster;
     
     
-    public Button           current_moveButton;
-    public Tile[]           tiles;
-    public MyBuilding[]     currentBuildings = new MyBuilding[3];
-    public int              createUnitNumber = 3;
-    public int              buildCnt = 1;
-    public Image            waitingPanel;
+    //public MyUnit           currentUnit;
+    //public MyUnit           currentEnemy;
+    //public MyBuilding       currentBuilding;
+    //public Tile             P1_core_Tile;
+    //public Tile             P2_core_Tile;
     
-    public Queue            que = new Queue();
-    public Cloud            cloud;
-    public Button           decisionButton;
-    public bool             firstDecision = false;
-    public Text             timer;
-    public float            time = 10;
-    public Color minimapNormalColor;
-    private float           selectCount;
-    //public IEnumerator      t;
-    public bool             isIgnoreCheck = true;
-    public Text             turnEndText;
-    [SerializeField]
+    
+    //public Button           current_moveButton;
+    public Tile[] tiles;
+    //public MyBuilding[]     currentBuildings = new MyBuilding[3];
+    //public int              createUnitNumber = 3;
+    //public int              buildCnt = 1;
+    //public Image            waitingPanel;
+    
+    //public Queue            que = new Queue();
+    //public Cloud            cloud;
+    //public Button           decisionButton;
+    //public bool             firstDecision = false;
+    //public Text             timer;
+    //public float            time = 10;
+    //public Color minimapNormalColor;
+    //private float           selectCount;
+    ////public IEnumerator      t;
+    //public bool             isIgnoreCheck = true;
+    
+    //[SerializeField]
     
 
-    public int              P1_score = 0;
-    public int              P2_score = 0;
-    public int              P1_totalUnit = 0;
-    public int              P2_totalUnit = 0;
-    public int              P1_totalKill = 0;
-    public int              P2_totalKill = 0;
-    public int              P1_totalMoney = 0;
-    public int              P2_totalMoney = 0;
-    public int              P1_totalOccupation = 0;
-    public int              P2_totalOccupation = 0;
+    //public int              P1_score = 0;
+    //public int              P2_score = 0;
+    //public int              P1_totalUnit = 0;
+    //public int              P2_totalUnit = 0;
+    //public int              P1_totalKill = 0;
+    //public int              P2_totalKill = 0;
+    //public int              P1_totalMoney = 0;
+    //public int              P2_totalMoney = 0;
+    //public int              P1_totalOccupation = 0;
+    //public int              P2_totalOccupation = 0;
     
-    public Text             p1_score;
-    public Text             p2_score;
-    public Text             p1_unit;
-    public Text             p2_unit;
-    public Text             p1_kill;
-    public Text             p2_kill;
-    public Text             p1_money;
-    public Text             p2_money;
-    public Text             p1_occupation;
-    public Text             p2_occupation;
-    public Text             GameResult;
+    //public Text             p1_score;
+    //public Text             p2_score;
+    //public Text             p1_unit;
+    //public Text             p2_unit;
+    //public Text             p1_kill;
+    //public Text             p2_kill;
+    //public Text             p1_money;
+    //public Text             p2_money;
+    //public Text             p1_occupation;
+    //public Text             p2_occupation;
+    //public Text             GameResult;
 
     //public Text yes;
 
-    
+
 
 
     //================================================================================
     // variable
     //================================================================================
-    Utility UT = new Utility();
+    Utility             UT = new Utility();
 
-    enum PlayState { ready, play };
-    PlayState playState;
+    enum PlayState      { ready, play };
+    PlayState           playState;
 
-    bool isPlay = true;
-    bool isWaiting = true;
-    public Text waitingText;
+    enum WhoseTurn      { PLAYER1 = 7, PLAYER2 };
+    WhoseTurn           whoseTurn;
 
-    public Tile currentTile;
+    bool                isPlay = true;
+    bool                isWaiting = true;
+    //public Text         waitingText;
 
-    int money;
-    public Text currentMoney;
+    public Tile         currentTile;
+    int                 money;
+    int unitCnt;
+    int buildCnt;
 
-    public IEnumerator t;
+    float selectCount;
+    int time = 180;
+    int                 turnNumber = 0;
+    //public Text         turnEndText;
+    int score;
+    int kill;
 
-    public Player player;
-    public Player p1Player;
-    public Player p2Player;
+    public MyUnit currentUnit;
+    public MyBuilding currentBuilding;
+
+    public IEnumerator  t;
+
+    Player              player;
+    public Player       p1Player;
+    public Player       p2Player;
     //================================================================================
     // Monobehaviour functions
     //================================================================================
@@ -123,7 +136,6 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     private void Start()
     {
         GameManager.instance.audioManager.StartGameSceneBGM();
-        uIManager.state = UIManager.State.Ready;
 
         currentTile = player.GetCoreTile();
         currentTile.minimap_Tile.color = player.GetPlayerColor();
@@ -139,7 +151,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
             if (PhotonNetwork.PlayerList.Length > 1)
             {
                 isWaiting = false;
-                waitingText.text = "Success Matching!";
+                UT.SetText(UI.waitingText, "Success Matching!");
                 Invoke("Matched", 2.0f);
             }
         }
@@ -154,15 +166,21 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
             photonView.RPC("EndGameRPC", RpcTarget.All);
         }
     }
-
+    //================================================================================
     // functions
+    //================================================================================
     #region
     private void Matched()
     {
         playState = PlayState.play;
-        uIManager.state = UIManager.State.Idle;
-        UT.SetActive(waitingPanel, false);
-        UT.SetActive(cloud.gameObject, true);
+        whoseTurn = WhoseTurn.PLAYER1;
+        UI.state = UIManager.State.Idle;
+        UI.StartCloudAnimation();
+    }
+
+    public Player GetPlayer()
+    {
+        return player;
     }
 
     public int GetMoney()
@@ -173,23 +191,23 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     public void SetMoney(int m)
     {
         money = m;
-        currentMoney.text = money.ToString();
+        UT.SetText(UI.curMoney, money);
     }
 
     public void StartTimer()
     {
         t = Timer();
-        UT.SetActive(timer, true);
+        UT.SetActive(UI.timer, true);
         StartCoroutine(t);
     }
 
     public void StopTimer()
     {
         StopCoroutine(t);
-        UT.SetActive(timer, false);
+        UT.SetActive(UI.timer, false);
     }
 
-    public bool CheckUnitsActiveCost()
+    private bool CheckUnitsActiveCost()
     {
         MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
         foreach (MyUnit unit in units)
@@ -199,9 +217,85 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         }
         return false;
     }
-    #endregion
 
-    // Coroutine
+    private bool CheckDecision()
+    {
+        Decision[] decisions = GameObject.FindObjectsOfType<Decision>();
+        foreach (Decision d in decisions)
+        {
+            if (d.isDecisionActive && (player.GetLayer() == d.layer))
+                return true;
+        }
+
+        return false;
+    }
+
+    private void NextTurn()
+    {
+        if ((int)whoseTurn == player.GetLayer())
+        {
+            MyTurn();
+        }
+        else
+            OtherTurn();
+    }
+
+    private void MyTurn()
+    {
+        UI.state = UIManager.State.Idle;
+        UI.SetIdleState();
+        StartTimer();
+    }
+
+    private void OtherTurn()
+    {
+        UI.state = UIManager.State.Next;
+        UI.SetNextState();
+        StopTimer();
+    }
+
+    private void GetScore(MyUnit unit)
+    {
+        if(unit.gameObject.layer != player.GetLayer())
+        {
+            score += 50;
+            kill++;
+        }
+    }
+
+    private void ShowDecisionIcon(Tile tile)
+    {
+        if(tile.gameObject.layer == player.GetLayer())
+        {
+            tile.decisionIcon.GetComponent<DecisionIcon>().layer = player.GetLayer();
+            UT.SetActive(tile.decisionIcon, true);
+        }
+    }
+
+    public int GetBuildCnt()
+    {
+        return buildCnt;
+    }
+
+    public void SetBuildCnt(int num)
+    {
+        buildCnt = num;
+    }
+
+    public int GetUnitCnt()
+    {
+        return unitCnt;
+    }
+
+    public void SetUnitCnt()
+    {
+        unitCnt -= 1;
+    }
+
+    #endregion
+    //================================================================================
+    // coroutine
+    //================================================================================
     IEnumerator Timer()
     {
         selectCount = time;
@@ -214,14 +308,15 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
             else
             {
                 selectCount -= Time.deltaTime;
-                timer.text = Mathf.Floor(selectCount).ToString();
+                UI.timer.text = Mathf.Floor(selectCount).ToString();
             }
             yield return null;
         }
-        AddTurnNumber();
+        CheckTurn();
     }
-
+    //================================================================================
     // RPC call functions
+    //================================================================================
     #region
     public void Exit()
     {
@@ -229,100 +324,19 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         PhotonNetwork.LeaveRoom();
         SceneManager.LoadScene(0);
     }
-    #endregion
 
-
-    
-
-    
-
-    
-
-    //public void UnitReset()
-    //{
-    //    CurrentUnitNull();
-    //    currentEnemy = null;
-    //    //uIManager.unitInfo_panel.gameObject.SetActive(false);
-    //    uIManager.CloseUnitInfo();
-    //    uIManager.unitButtonPanel.gameObject.SetActive(false);
-    //}
-
-    //public void BuildingReset()
-    //{
-    //    currentBuilding = null;
-    //    foreach(Image i in uIManager.buildingLevels)
-    //    {
-    //        i.gameObject.SetActive(false);
-    //    }
-    //    foreach(Text t in uIManager.buildingEffects)
-    //    {
-    //        t.gameObject.SetActive(false);
-    //    }
-    //    uIManager.buildingInfo_panel.gameObject.SetActive(false);
-    //}
-    
-    //public void GameWin()
-    //{
-
-    //}
-
-    //public void GameLose()
-    //{
-
-    //}
-
-    
-
-    public bool CheckDecision()
+    public void CheckTurn()
     {
-        bool isCheck = false;
-        if(isMaster)
+        if (UI.GetIsIgnoreCheck())
         {
-            DecisionIcon[] decision = GameObject.FindObjectsOfType<DecisionIcon>();
-            foreach(DecisionIcon d in decision)
+            if (CheckDecision())
             {
-                if(d.gameObject.activeSelf && d.isP1Decision)
-                {
-                    isCheck = true;
-                    return isCheck;
-                }
-            }
-        }
-        else
-        {
-            DecisionIcon[] decision = GameObject.FindObjectsOfType<DecisionIcon>();
-            foreach(DecisionIcon d in decision)
-            {
-                if(d.gameObject.activeSelf && d.isP2Decision)
-                {
-                    isCheck = true;
-                    return isCheck;
-                }
-            }
-        }
-        return isCheck;
-    }
-
-#region // call RPC function
-    public void AddTurnNumber()
-    {
-        if(isIgnoreCheck)
-        {
-            if(CheckDecision())
-            {
-                string s = "남아있는 디시전이 있습니다.^^";
-                uIManager.ShowCheckWindow(s);
+                UI.ShowCheckWindow("남아있는 디시전이 있습니다.^^");
                 return;
             }
-            else if(CheckUnitsActiveCost())
+            else if (CheckUnitsActiveCost())
             {
-                string s = "행동력이 남은 유닛이 있습니다.^^";
-                uIManager.ShowCheckWindow(s);
-                return;
-            }
-            else
-            {
-                AddTurn();
+                UI.ShowCheckWindow("행동력이 남은 유닛이 있습니다.^^");
                 return;
             }
         }
@@ -331,58 +345,236 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
 
     public void AddTurn()
     {
-        if(uIManager.checkWindow.gameObject.activeSelf)
-        {
-            uIManager.checkWindow.gameObject.SetActive(false);
-        }
+        if (UI.checkWindow.gameObject.activeSelf)
+            UT.SetActive(UI.checkWindow, false);
+
         photonView.RPC("AddTurnNumberRPC", RpcTarget.All);
-        if(turn_Number % 2 == 0)
+        if (turnNumber % 2 == 0)
         {
             photonView.RPC("NextTurnRPC", RpcTarget.All);
-            photonView.RPC("UnitUpdateRPC", RpcTarget.All);
-            photonView.RPC("TileUpdateRPC", RpcTarget.All);
+            photonView.RPC("UpdateUnitOnTileRPC", RpcTarget.All);
+            photonView.RPC("UpdateTileRPC", RpcTarget.All);
         }
     }
 
-    public void IgnoreActiveCostCheck()
+    public void CheckPosOnTile(Tile tile, int posNum, bool check)
     {
-        isIgnoreCheck = !isIgnoreCheck;
-        if(!isIgnoreCheck)
+        int id = tile.GetComponent<PhotonView>().ViewID;
+        photonView.RPC("CheckPosOnTileRPC", RpcTarget.All, id, posNum, check, player.GetLayer());
+    }
+
+    public void Attact(int myId, int enemyId)
+    {
+        photonView.RPC("AttackRPC", RpcTarget.All, myId, enemyId);
+    }
+
+    public void DestroyBuilding(GameObject building)
+    {
+        int id = building.GetComponent<PhotonView>().ViewID;
+        photonView.RPC("DestroyBuildingRPC", RpcTarget.All, id);
+    }
+    #endregion
+    //================================================================================
+    // RPC functions
+    //================================================================================
+    #region
+    [PunRPC]
+    private void AddTurnNumberRPC()
+    {
+        turnNumber += 1;
+
+        if (turnNumber >= 100)
         {
-            turnEndText.text = "OFF";
+            photonView.RPC("EndGameRPC", RpcTarget.All);
+            return;
         }
+
+        if (whoseTurn == WhoseTurn.PLAYER1)
+            whoseTurn = WhoseTurn.PLAYER2;
+        else
+            whoseTurn = WhoseTurn.PLAYER1;
+
+        NextTurn();
+    }
+
+    [PunRPC]
+    private void NextTurnRPC()
+    {
+        effectSoundManager.PlayGoldSound();
+        UT.SetText(UI.curTurn, ((turnNumber / 2) + 1).ToString() + "   TURN");
+        buildCnt = 1;
+    }
+
+    [PunRPC]
+    private void UpdateUnitOnTileRPC()
+    {
+        unitCnt = 3;
+
+        MyUnit[] units = FindObjectsOfType<MyUnit>();
+        foreach (MyUnit unit in units)
+        {
+            unit.ActiveCostUpdate();
+            unit.currentTile.SetOcupatedScore(unit);
+        }
+    }
+
+    [PunRPC]
+    private void UpdateTileRPC()
+    {
+        foreach (Tile tile in tiles)
+        {
+            tile.GetTileMoney();
+            if (tile.GetOccupatedScore() >= 3)
+            {
+                tile.gameObject.layer = 7;
+                tile.SetOcupatedScore(3);
+                tile.CheckTileOwner(true, false);
+                if (!tile.isDecision)
+                {
+                    tile.isDecision = true;
+                    ShowDecisionIcon(tile);
+                }
+            }
+            else if (tile.GetOccupatedScore() <= -3)
+            {
+                tile.gameObject.layer = 8;
+                tile.SetOcupatedScore(-3);
+                tile.CheckTileOwner(false, true);
+                if (!tile.isDecision)
+                {
+                    tile.isDecision = true;
+                    ShowDecisionIcon(tile);
+                }
+            }
+            else
+            {
+                tile.gameObject.layer = 9;
+                tile.CheckTileOwner(false, false);
+            }
+
+            if ((tile.isP1CoreTile && tile.isP2Tile) || (tile.isP2CoreTile && tile.isP1Tile))
+            {
+                photonView.RPC("EndGameRPC", RpcTarget.All);
+                return;
+            }
+
+            currentTile.DisappearOcc();
+            currentTile.ShowOcc();
+        }
+    }
+
+    [PunRPC]
+    private void ExitRPC()
+    {
+        UI.SetEndState();
+        PhotonNetwork.LeaveRoom();
+    }
+
+    [PunRPC]
+    private void CheckPosOnTileRPC(int id, int posNum, bool check, int layer)
+    {
+        Tile[] tiles = FindObjectsOfType<Tile>();
+        foreach (Tile tile in tiles)
+        {
+            if (tile.GetComponent<PhotonView>().ViewID == id)
+            {
+                if (layer == 7)
+                    tile.isP1_unitArea[posNum] = check;
+                else
+                    tile.isP2_unitArea[posNum] = check;
+            }
+        }
+    }
+
+    [PunRPC]
+    private void AttackRPC(int myId, int enemyId)
+    {
+        MyUnit unit = new MyUnit();
+        MyUnit enemy = new MyUnit();
+
+        MyUnit[] units = FindObjectsOfType<MyUnit>();
+        foreach (MyUnit u in units)
+        {
+            if (u.GetComponent<PhotonView>().ViewID == myId)
+                unit = u;
+            else if (u.GetComponent<PhotonView>().ViewID == enemyId)
+                enemy = u;
+        }
+
+        if (unit.offensive >= enemy.defensive)
+            enemy.GetAttack();
         else
         {
-            turnEndText.text = "ON";
+            enemy.accDamage += unit.offensive;
+            if (enemy.accDamage >= enemy.defensive)
+                enemy.GetAttack();
         }
-    }
 
-    public void CreatedUnitAreaCheck(bool master, bool check, int area)
-    {
-        if(master)
+        unit.activeCost = 0;
+
+        if (enemy.hp <= 0)
         {
-            photonView.RPC("CreatedUnitP1AreaCheckRPC", RpcTarget.All, check, area);
+            GetScore(enemy);
+            enemy.currentTile.DeleteUnit(enemy);
+            Destroy(enemy.gameObject);
+            effectSoundManager.PlayDestroySound();
         }
-        else
+        UI.OffReadyAttack();
+    }
+
+    [PunRPC]
+    private void DestroyBuildingRPC(int id)
+    {
+        MyBuilding[] buildings = FindObjectsOfType<MyBuilding>();
+        foreach (MyBuilding building in buildings)
         {
-            photonView.RPC("CreatedUnitP2AreaCheckRPC", RpcTarget.All, check, area);
+            if (building.GetComponent<PhotonView>().ViewID == id)
+            {
+                Destroy(building.gameObject);
+                return;
+            }
         }
     }
+    #endregion
+    //================================================================================
+    //================================================================================
 
-    public void CheckUnitArea(int layer, int id, bool check, int num)
-    {
-        photonView.RPC("CheckUnitAreaRPC", RpcTarget.All, layer, id, check, num);
-    }
 
-    public void CheckCoreTileUnits(int unitId, int num, bool isMaster)
-    {
-        photonView.RPC("CheckCoreTileUnitsRPC", RpcTarget.All, unitId, num, isMaster);
-    }
 
-    public void CheckTileUnits(int tileId, int unitId, int num, bool isMaster, bool check)
-    {
-        photonView.RPC("CheckTileUnitsRPC", RpcTarget.All, tileId, unitId, num, isMaster, check);
-    }
+
+
+    //public void CreatedUnitAreaCheck(bool master, bool check, int area)
+    //{
+    //    if(master)
+    //    {
+    //        photonView.RPC("CreatedUnitP1AreaCheckRPC", RpcTarget.All, check, area);
+    //    }
+    //    else
+    //    {
+    //        photonView.RPC("CreatedUnitP2AreaCheckRPC", RpcTarget.All, check, area);
+    //    }
+    //}
+
+    // Tile을 넘겨받아 해당 타일의 어떤 유닛 자리에 유닛이 있는지 확인하는 함수
+    //public void CheckUnitArea(int layer, int id, bool check, int num)
+    //{
+    //    photonView.RPC("CheckUnitAreaRPC", RpcTarget.All, layer, id, check, num);
+    //}
+    // 타일의 어느 포지션에 유닛이 빠져나가고 들어왔는지 체크하는 함수
+
+
+
+
+
+    //public void CheckCoreTileUnits(int unitId, int num, bool isMaster)
+    //{
+    //    photonView.RPC("CheckCoreTileUnitsRPC", RpcTarget.All, unitId, num, isMaster);
+    //}
+
+    //public void CheckTileUnits(int tileId, int unitId, int num, bool isMaster, bool check)
+    //{
+    //    photonView.RPC("CheckTileUnitsRPC", RpcTarget.All, tileId, unitId, num, isMaster, check);
+    //}
 
     public void ApplyCreateUnitVariable(int id, int type)
     {
@@ -400,10 +592,9 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         }
     }
 
-    public void Attact(int myId, int enemyId)
-    {
-        photonView.RPC("AttackRPC", RpcTarget.All, myId, enemyId);
-    }
+    
+
+    
 
     public void BuildingUpgrade(int buildingId)
     {
@@ -459,276 +650,122 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     {
         photonView.RPC("CreateBuildingRPC", RpcTarget.All);
     }
-#endregion
 
 #region // RPC functions
-    [PunRPC]
-    private void AddTurnNumberRPC()
-    {
-        turn_Number += 1;
-        if(turn_Number >= 100)
-        {
-            photonView.RPC("EndGameRPC", RpcTarget.All);
-            return;
-        }
+    
 
-        if((turn_Number % 2 == 1) && isMaster)
-        {
-            uIManager.state = UIManager.State.Next;
-            uIManager.SetNextState();
-            StopTimer();
-        }
-        else if((turn_Number % 2 == 0) && !isMaster)
-        {
-            uIManager.state = UIManager.State.Next;
-            uIManager.SetNextState();
-            StopTimer();
-        }
-        else if((turn_Number % 2 == 0) && isMaster)
-        {
-            uIManager.state = UIManager.State.Idle;
-            uIManager.SetIdleState();
-            StartTimer();
+    
 
-        }
-        else if((turn_Number % 2 == 1) && !isMaster)
-        {
-            uIManager.state = UIManager.State.Idle;
-            uIManager.SetIdleState();
-            StartTimer();
-        }
-    }
+    
 
-    [PunRPC]
-    private void NextTurnRPC()
-    {
-        currentTurn.text = ((turn_Number / 2) + 1).ToString() + "   TURN";
-        buildCnt = 1;
-        effectSoundManager.PlayGoldSound();
-    }
+    
 
-    [PunRPC]
-    private void TileUpdateRPC()
-    {
-        foreach(Tile t in tiles)
-        {
-            t.GetTileMoney();
-            if((t.occupationCost >= 3 && t.isP1Tile) || (t.occupationCost <= -3 && t.isP2Tile))
-            {
-                if(t.isP1Tile)
-                {
-                    t.occupationCost = 3;
-                }
-                else if(t.isP2Tile)
-                {
-                    t.occupationCost = -3;
-                }
-            }
-            else if(t.occupationCost >= 3 && !t.isP1Tile)
-            {
-                if(t.isP2CoreTile)
-                {
-                    photonView.RPC("EndGameRPC", RpcTarget.All);
-                    return;
-                }
-                t.occupationCost = 3;
-                t.isP1Tile = true;
-                t.gameObject.transform.Find("flag_Blue").gameObject.SetActive(true);
-                if(!t.GetComponent<Tile>().isDecision)
-                {
-                    t.GetComponent<Tile>().isDecision = true;
-                    t.decisionIcon.GetComponent<DecisionIcon>().isP1Decision = true;
-                    if(isMaster)
-                    {
-                        t.decisionIcon.GetComponent<DecisionIcon>().gameObject.SetActive(true);
-                        if(!firstDecision)
-                        {
-                            firstDecision = true;
-                            decisionButton.gameObject.SetActive(true);
-                        }
-                    }
-                }
-            }
-            else if(t.occupationCost <= -3 && !t.isP2Tile)
-            {
-                if(t.isP1CoreTile)
-                {
-                    photonView.RPC("EndGameRPC", RpcTarget.All);
-                    return;
-                }
-                t.occupationCost = -3;
-                t.isP2Tile = true;
-                t.gameObject.transform.Find("flag_Red").gameObject.SetActive(true);
-                if(!t.GetComponent<Tile>().isDecision)
-                {
-                    t.GetComponent<Tile>().isDecision = true;
-                    t.decisionIcon.GetComponent<DecisionIcon>().isP2Decision = true;
-                    if(!isMaster)
-                    {
-                        if(!firstDecision)
-                        {
-                            firstDecision = true;
-                            decisionButton.gameObject.SetActive(true);
-                        }
-                        t.decisionIcon.GetComponent<DecisionIcon>().gameObject.SetActive(true);
-                    }
-                }
-            }
-            else if(t.occupationCost < 3 && t.occupationCost > -3)
-            {
-                t.isP1Tile = false;
-                t.isP2Tile = false;
-                t.gameObject.transform.Find("flag_Blue").gameObject.SetActive(false);
-                t.gameObject.transform.Find("flag_Red").gameObject.SetActive(false);
-            }
-        }
-        currentTile.DisappearOcc();
-        currentTile.ShowOcc();
-    }
+    
 
-    [PunRPC]
-    private void UnitUpdateRPC()
-    {
-        createUnitNumber = 3;
-        MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
-        foreach(MyUnit u in units)
-        {
-            u.ActiveCostUpdate();
-            if(u.gameObject.layer == 7)
-            {
-                if(!u.currentTile.GetComponent<Tile>().isP1Tile)
-                {
-                    if(u.type == 1 || u.type == 2)
-                    {
-                        u.currentTile.occupationCost += VariableManager.Instance.war_Occupation;
-                    }
-                    else
-                    {
-                        u.currentTile.occupationCost += VariableManager.Instance.mag_Occupation;
-                    }
-                }
-            }
-            else if(u.gameObject.layer == 8)
-            {
-                if(!u.currentTile.GetComponent<Tile>().isP2Tile)
-                {
-                    if(u.type == 1 || u.type == 2)
-                    {
-                        u.currentTile.occupationCost -= VariableManager.Instance.war_Occupation;
-                    }
-                    else
-                    {
-                        u.currentTile.occupationCost -= VariableManager.Instance.mag_Occupation;
-                    }
-                }
-            }
-        }
-    }
+    //[PunRPC]
+    //private void CreatedUnitP1AreaCheckRPC(bool check, int area)
+    //{
+    //    P1_core_Tile.isP1_unitArea[area] = check;
+    //}
 
-    [PunRPC]
-    private void CreatedUnitP1AreaCheckRPC(bool check, int area)
-    {
-        P1_core_Tile.isP1_unitArea[area] = check;
-    }
+    //[PunRPC]
+    //private void CreatedUnitP2AreaCheckRPC(bool check, int area)
+    //{
+    //    P2_core_Tile.isP2_unitArea[area] = check;
+    //}
 
-    [PunRPC]
-    private void CreatedUnitP2AreaCheckRPC(bool check, int area)
-    {
-        P2_core_Tile.isP2_unitArea[area] = check;
-    }
+    //[PunRPC]
+    //private void CheckUnitAreaRPC(int layer, int id, bool check, int num)
+    //{
+    //    foreach(Tile t in tiles)
+    //    {
+    //        if(t.GetComponent<PhotonView>().ViewID == id)
+    //        {
+    //            if(layer == 7)
+    //            {
+    //                t.isP1_unitArea[num] = check;
+    //            }
+    //            else
+    //            {
+    //                t.isP2_unitArea[num] = check;
+    //            }
+    //            return;
+    //        }
+    //    }
+    //}
 
-    [PunRPC]
-    private void CheckUnitAreaRPC(int layer, int id, bool check, int num)
-    {
-        foreach(Tile t in tiles)
-        {
-            if(t.GetComponent<PhotonView>().ViewID == id)
-            {
-                if(layer == 7)
-                {
-                    t.isP1_unitArea[num] = check;
-                }
-                else
-                {
-                    t.isP2_unitArea[num] = check;
-                }
-                return;
-            }
-        }
-    }
+    //[PunRPC]
+    //private void CheckCoreTileUnitsRPC(int unitId, int num, bool isMaster)
+    //{
+    //    GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+    //    foreach(GameObject unit in units)
+    //    {
+    //        if(unit.GetComponent<PhotonView>().ViewID == unitId)
+    //        {
+    //            unit.GetComponent<MyUnit>().myNum = num;
+    //            if(isMaster)
+    //            {
+    //                P1_core_Tile.GetComponent<Tile>().P1_units[num] = unit.GetComponent<MyUnit>();
+    //                P1_core_Tile.MoveMapButton.GetComponent<MoveUnit>().p1unit[num].gameObject.SetActive(true);
+    //                unit.GetComponent<MyUnit>().currentTile = P1_core_Tile;
+    //            }
+    //            else
+    //            {
+    //                P2_core_Tile.GetComponent<Tile>().P2_units[num] = unit.GetComponent<MyUnit>();
+    //                P2_core_Tile.MoveMapButton.GetComponent<MoveUnit>().p2unit[num].gameObject.SetActive(true);
+    //                unit.GetComponent<MyUnit>().currentTile = P2_core_Tile;
+    //            }
+    //            return;
+    //        }
+    //    }
+    //}
 
-    [PunRPC]
-    private void CheckCoreTileUnitsRPC(int unitId, int num, bool isMaster)
-    {
-        GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
-        foreach(GameObject unit in units)
-        {
-            if(unit.GetComponent<PhotonView>().ViewID == unitId)
-            {
-                unit.GetComponent<MyUnit>().myNum = num;
-                if(isMaster)
-                {
-                    P1_core_Tile.GetComponent<Tile>().P1_units[num] = unit.GetComponent<MyUnit>();
-                    P1_core_Tile.MoveMapButton.GetComponent<MoveUnit>().p1unit[num].gameObject.SetActive(true);
-                    unit.GetComponent<MyUnit>().currentTile = P1_core_Tile;
-                }
-                else
-                {
-                    P2_core_Tile.GetComponent<Tile>().P2_units[num] = unit.GetComponent<MyUnit>();
-                    P2_core_Tile.MoveMapButton.GetComponent<MoveUnit>().p2unit[num].gameObject.SetActive(true);
-                    unit.GetComponent<MyUnit>().currentTile = P2_core_Tile;
-                }
-                return;
-            }
-        }
-    }
-
-    [PunRPC]
-    private void CheckTileUnitsRPC(int tileId, int unitId, int num, bool isMaster, bool check)
-    {
-        foreach(Tile t in tiles)
-        {
-            if(t.GetComponent<PhotonView>().ViewID == tileId)
-            {
-                GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
-                foreach(GameObject unit in units)
-                {
-                    if(unit.GetComponent<PhotonView>().ViewID == unitId)
-                    {
-                        if(isMaster)
-                        {
-                            if(!check)
-                            {
-                                t.P1_units[num] = null;
-                                t.MoveMapButton.GetComponent<MoveUnit>().p1unit[num].gameObject.SetActive(false);
-                            }
-                            else
-                            {
-                                unit.GetComponent<MyUnit>().myNum = num;
-                                t.P1_units[num] = unit.GetComponent<MyUnit>();
-                                t.MoveMapButton.GetComponent<MoveUnit>().p1unit[num].gameObject.SetActive(true);
-                            }
-                        }
-                        else
-                        {
-                            if(!check)
-                            {
-                                t.P2_units[num] = null;
-                                t.MoveMapButton.GetComponent<MoveUnit>().p2unit[num].gameObject.SetActive(false);
-                            }
-                            else
-                            {
-                                unit.GetComponent<MyUnit>().myNum = num;
-                                t.P2_units[num] = unit.GetComponent<MyUnit>();
-                                t.MoveMapButton.GetComponent<MoveUnit>().p2unit[num].gameObject.SetActive(true);
-                            }
-                        }
-                        return;
-                    }
-                }
-            }
-        }
-    }
+    //[PunRPC]
+    //private void CheckTileUnitsRPC(int tileId, int unitId, int num, bool isMaster, bool check)
+    //{
+    //    foreach(Tile t in tiles)
+    //    {
+    //        if(t.GetComponent<PhotonView>().ViewID == tileId)
+    //        {
+    //            GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
+    //            foreach(GameObject unit in units)
+    //            {
+    //                if(unit.GetComponent<PhotonView>().ViewID == unitId)
+    //                {
+    //                    if(isMaster)
+    //                    {
+    //                        if(!check)
+    //                        {
+    //                            t.P1_units[num] = null;
+    //                            t.MoveMapButton.GetComponent<MoveUnit>().p1unit[num].gameObject.SetActive(false);
+    //                        }
+    //                        else
+    //                        {
+    //                            unit.GetComponent<MyUnit>().myNum = num;
+    //                            t.P1_units[num] = unit.GetComponent<MyUnit>();
+    //                            t.MoveMapButton.GetComponent<MoveUnit>().p1unit[num].gameObject.SetActive(true);
+    //                        }
+    //                    }
+    //                    else
+    //                    {
+    //                        if(!check)
+    //                        {
+    //                            t.P2_units[num] = null;
+    //                            t.MoveMapButton.GetComponent<MoveUnit>().p2unit[num].gameObject.SetActive(false);
+    //                        }
+    //                        else
+    //                        {
+    //                            unit.GetComponent<MyUnit>().myNum = num;
+    //                            t.P2_units[num] = unit.GetComponent<MyUnit>();
+    //                            t.MoveMapButton.GetComponent<MoveUnit>().p2unit[num].gameObject.SetActive(true);
+    //                        }
+    //                    }
+    //                    return;
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
 
     [PunRPC]
     private void ApplyCreateUnitVariableRPC(int id, int hp, int off, int def, int act)
@@ -747,165 +784,21 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    private void AttackRPC(int myId, int enemyId)
-    {
-        GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
-        foreach(GameObject myUnit in units)
-        {
-            if(myUnit.GetComponent<PhotonView>().ViewID == myId)
-            {
-                foreach(GameObject enemy in units)
-                {
-                    if(enemy.GetComponent<PhotonView>().ViewID == enemyId)
-                    {
-                        if(myUnit.GetComponent<MyUnit>().offensive >= enemy.GetComponent<MyUnit>().defensive)
-                        {
-                            enemy.GetComponent<MyUnit>().hp -= 1;
-                            enemy.GetComponent<MyUnit>().attackParticle.Play();
-                            enemy.GetComponent<MyUnit>().accDamage = 0;
-                        }
-                        else
-                        {
-                            enemy.GetComponent<MyUnit>().accDamage += myUnit.GetComponent<MyUnit>().offensive;
-                            if(enemy.GetComponent<MyUnit>().accDamage >= enemy.GetComponent<MyUnit>().defensive)
-                            {
-                                enemy.GetComponent<MyUnit>().hp -= 1;
-                                enemy.GetComponent<MyUnit>().attackParticle.Play();
-                                enemy.GetComponent<MyUnit>().accDamage = 0;
-                            }
-                        }
-                        myUnit.GetComponent<MyUnit>().activeCost = 0;
-                        
-                        // if(myUnit.GetComponent<MyUnit>().offensive > enemy.GetComponent<MyUnit>().defensive)
-                        // {
-                        //     switch(myUnit.GetComponent<MyUnit>().type)
-                        //     {
-                        //         case 1:
-                        //         myUnit.GetComponent<MyUnit>().current_hp -= 15;
-                        //         break;
-                        //         case 2:
-                        //         break;
-                        //         case 3:
-                        //         myUnit.GetComponent<MyUnit>().current_hp -= 5;
-                        //         break;
-                        //     }
+    
 
-                        //     switch(enemy.GetComponent<MyUnit>().type)
-                        //     {
-                        //         case 1:
-                        //         enemy.GetComponent<MyUnit>().current_hp -= 10 + (myUnit.GetComponent<MyUnit>().offensive - enemy.GetComponent<MyUnit>().defensive);
-                        //         break;
-                        //         case 2:
-                        //         enemy.GetComponent<MyUnit>().current_hp -= 15 + (myUnit.GetComponent<MyUnit>().offensive - enemy.GetComponent<MyUnit>().defensive);
-                        //         break;
-                        //         case 3:
-                        //         enemy.GetComponent<MyUnit>().current_hp -= 10 + (myUnit.GetComponent<MyUnit>().offensive - Mathf.RoundToInt(enemy.GetComponent<MyUnit>().defensive * 1.2f));
-                        //         break;
-                        //     }
-                        // }
-                        // else
-                        // {
-                        //     switch(myUnit.GetComponent<MyUnit>().type)
-                        //     {
-                        //         case 1:
-                        //         myUnit.GetComponent<MyUnit>().current_hp -= 10 + (enemy.GetComponent<MyUnit>().defensive - myUnit.GetComponent<MyUnit>().offensive);
-                        //         break;
-                        //         case 2:
-                        //         break;
-                        //         case 3:
-                        //         myUnit.GetComponent<MyUnit>().current_hp -= 5 + Mathf.RoundToInt((enemy.GetComponent<MyUnit>().defensive - myUnit.GetComponent<MyUnit>().offensive) * 0.8f);
-                        //         break;
-                        //     }
-
-                        //     switch(enemy.GetComponent<MyUnit>().type)
-                        //     {
-                        //         case 1:
-                        //         enemy.GetComponent<MyUnit>().current_hp -= 5;
-                        //         break;
-                        //         case 2:
-                        //         enemy.GetComponent<MyUnit>().current_hp -= 10;
-                        //         break;
-                        //         case 3:
-                        //         enemy.GetComponent<MyUnit>().current_hp -= 5;
-                        //         break;
-                        //     }
-                        // }
-
-                        // myUnit.GetComponent<MyUnit>().activeCost = 0;
-
-                        // if(myUnit.GetComponent<MyUnit>().hp <= 0)
-                        // {
-                        //     if(myUnit.gameObject.layer == 7)
-                        //     {
-                        //         P2_score += 50;
-                        //         p2_score.text = P2_score.ToString();
-                        //         P2_totalKill += 1;
-                        //         p2_kill.text = P2_totalKill.ToString();
-                        //         myUnit.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().isP1_unitArea[myUnit.GetComponent<MyUnit>().myNum] = false;
-                        //         myUnit.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().P1_units[myUnit.GetComponent<MyUnit>().myNum] = null;
-                        //         myUnit.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().MoveMapButton.GetComponent<MoveUnit>().p1unit[myUnit.GetComponent<MyUnit>().myNum].gameObject.SetActive(false);
-                        //     }
-                        //     else if(myUnit.gameObject.layer == 8)
-                        //     {
-                        //         P1_score += 50;
-                        //         p1_score.text = P2_score.ToString();
-                        //         P1_totalKill += 1;
-                        //         p1_kill.text = P1_totalKill.ToString();
-                        //         myUnit.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().isP2_unitArea[myUnit.GetComponent<MyUnit>().myNum] = false;
-                        //         myUnit.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().P2_units[myUnit.GetComponent<MyUnit>().myNum] = null;
-                        //         myUnit.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().MoveMapButton.GetComponent<MoveUnit>().p2unit[myUnit.GetComponent<MyUnit>().myNum].gameObject.SetActive(false);
-                        //     }
-                        //     Destroy(myUnit.gameObject);
-                        // }
-
-                        if(enemy.GetComponent<MyUnit>().hp <= 0)
-                        {
-                            if(enemy.gameObject.layer == 7)
-                            {
-                                P2_score += 50;
-                                p2_score.text = P2_score.ToString();
-                                P2_totalKill += 1;
-                                p2_kill.text = P2_totalKill.ToString();
-                                enemy.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().isP1_unitArea[enemy.GetComponent<MyUnit>().myNum] = false;
-                                enemy.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().P1_units[enemy.GetComponent<MyUnit>().myNum] = null;
-                                myUnit.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().MoveMapButton.GetComponent<MoveUnit>().p1unit[myUnit.GetComponent<MyUnit>().myNum].gameObject.SetActive(false);
-                            }
-                            else if(enemy.gameObject.layer == 8)
-                            {
-                                P1_score += 50;
-                                p1_score.text = P1_score.ToString();
-                                P1_totalKill += 1;
-                                p1_kill.text = P1_totalKill.ToString();
-                                enemy.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().isP2_unitArea[enemy.GetComponent<MyUnit>().myNum] = false;
-                                enemy.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().P2_units[enemy.GetComponent<MyUnit>().myNum] = null;
-                                myUnit.GetComponent<MyUnit>().currentTile.GetComponent<Tile>().MoveMapButton.GetComponent<MoveUnit>().p2unit[myUnit.GetComponent<MyUnit>().myNum].gameObject.SetActive(false);
-                            }
-                            Destroy(enemy.gameObject);
-                            effectSoundManager.PlayDestroySound();
-                        }
-
-                        uIManager.OffReadyAttack();
-                    }
-                }
-            }
-        }
-        //uIManager.InfoWindowReset();
-    }
-
-    [PunRPC]
-    private void BuildingUpgradeRPC(int buildingId)
-    {
-        MyBuilding[] buildings = GameObject.FindObjectsOfType<MyBuilding>();
-        foreach(MyBuilding b in buildings)
-        {
-            if(b.GetComponent<PhotonView>().ViewID == buildingId)
-            {
-                Destroy(b.gameObject);
-                return;
-            }
-        }
-    }
+    //[PunRPC]
+    //private void BuildingUpgradeRPC(int buildingId)
+    //{
+    //    MyBuilding[] buildings = GameObject.FindObjectsOfType<MyBuilding>();
+    //    foreach(MyBuilding b in buildings)
+    //    {
+    //        if(b.GetComponent<PhotonView>().ViewID == buildingId)
+    //        {
+    //            Destroy(b.gameObject);
+    //            return;
+    //        }
+    //    }
+    //}
 
     [PunRPC]
     private void ApplyUnitOffenceEffectRPC(int layer, int war_off, int arc_off, int mag_off)
@@ -955,12 +848,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    private void ExitRPC()
-    {
-        uIManager.SetEndState();
-        PhotonNetwork.LeaveRoom();
-    }
+    
 
     [PunRPC]
     private void ApplyUnitCurrentTileRPC(int unitId, int tileId)

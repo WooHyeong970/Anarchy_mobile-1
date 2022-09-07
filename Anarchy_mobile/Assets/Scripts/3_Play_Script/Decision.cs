@@ -30,6 +30,8 @@ public class Decision : MonoBehaviourPun
     int[] society = {0, 27, 40, 60};
     int[] new_wave = {1, 5, 26, 45};
     int[] mafia = {2, 25, 45, 60};
+    public bool isDecisionActive;
+    public int layer;
 
     private void Start()
     {

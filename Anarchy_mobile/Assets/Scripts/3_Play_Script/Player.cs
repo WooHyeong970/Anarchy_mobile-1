@@ -10,13 +10,13 @@ public class Player
     private Tile coreTile;
 
     [SerializeField]
-    private Transform cam_start_point;
+    private Transform camStartPoint;
 
     [SerializeField]
-    private Transform[] building_area = new Transform[3];
+    private Transform[] buildingArea = new Transform[3];
 
     [SerializeField]
-    private Transform[] unit_area = new Transform[3];
+    private Transform[] unitArea = new Transform[3];
 
     [SerializeField]
     private int quaternion;
@@ -27,44 +27,32 @@ public class Player
     [SerializeField]
     private Color color;
 
-    bool[] is_exists = new bool[3];
-
     public Tile GetCoreTile()
     {
         return coreTile;
     }
 
-    public Transform getCamPoint()
+    public Transform GetCamPoint()
     {
-        return cam_start_point;
+        return camStartPoint;
     }
 
-    public Transform getBuilingArea(int type)
+    public Transform GetBuilingArea(int type)
     {
-        return building_area[type];
+        return buildingArea[type];
     }
 
-    public Transform getUnitArea(int num)
+    public Transform GetUnitArea(int num)
     {
-        return unit_area[num];
+        return unitArea[num];
     }
 
-    public int getQuaternioin()
+    public int GetQuaternioin()
     {
         return quaternion;
     }
 
-    public bool IsUnitExist(int num)
-    {
-        return is_exists[num];
-    }
-
-    public void SetIsUnitExist(int num, bool check)
-    {
-        is_exists[num] = check;
-    }
-
-    public LayerMask GetLayer()
+    public int GetLayer()
     {
         return layer;
     }

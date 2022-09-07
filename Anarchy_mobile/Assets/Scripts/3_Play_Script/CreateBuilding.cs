@@ -16,6 +16,7 @@ public class CreateBuilding : MonoBehaviourPunCallbacks
     public Text[]       levelTexts = new Text[3];
 
     public Button[]     buildingButtons = new Button[3];
+    GameObject[]        buildings = new GameObject[3];
     
     Utility             UT = new Utility();
     UIManager           UI;
@@ -24,8 +25,9 @@ public class CreateBuilding : MonoBehaviourPunCallbacks
 
     private void Start()
     {
-        for (int i = 0; i < 3; i++)
-            buildingButtons[i].onClick.AddListener(() => CreateBuildingFunc(buildingButtons[i], i + 1, levels[i]));
+        buildingButtons[0].onClick.AddListener(() => CreateBuildingFunc(buildingButtons[0], 1, levels[0]));
+        buildingButtons[1].onClick.AddListener(() => CreateBuildingFunc(buildingButtons[1], 2, levels[1]));
+        buildingButtons[2].onClick.AddListener(() => CreateBuildingFunc(buildingButtons[2], 3, levels[2]));
         forceName = GameManager.instance.playerData.getForceName();
     }
 
@@ -41,7 +43,7 @@ public class CreateBuilding : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (CP.buildCnt == 0)
+        if (CP.GetBuildCnt() == 0)
         {
             UI.fadeOutErrorMessage("건설 횟수 초과");
             return;
@@ -53,8 +55,9 @@ public class CreateBuilding : MonoBehaviourPunCallbacks
         levels[type - 1] = ++level;
 
         GameObject _building = InstantiateBuilding(type, level);
+        buildings[type - 1] = _building;
 
-        CP.currentBuildings[type - 1] = _building.GetComponent<MyBuilding>();
+        //CP.currentBuildings[type - 1] = _building.GetComponent<MyBuilding>();
         illust[type - 1].sprite = Resources.Load<Sprite>("BuildingIllusts/TYPE_" + type.ToString() + "_" + (level + 1).ToString());
         levelTexts[type - 1].text = "X " + levels[type - 1].ToString();
 
@@ -86,8 +89,10 @@ public class CreateBuilding : MonoBehaviourPunCallbacks
 
     GameObject InstantiateBuilding(int type, int level)
     {
-        CP.buildCnt = 0;
+        CP.SetBuildCnt(0);
         CP.SumScore(5, 0);
-        return PhotonNetwork.Instantiate(type.ToString() + "-" + level.ToString() + "_" + forceName, CP.player.getBuilingArea(type - 1).position, Quaternion.Euler(0, CP.player.getQuaternioin(), 0)) as GameObject;
+        if(buildings[type - 1] != null)
+            CP.DestroyBuilding(buildings[type - 1]);
+        return PhotonNetwork.Instantiate(type.ToString() + "-" + level.ToString() + "_" + forceName, CP.GetPlayer().GetBuilingArea(type - 1).position, Quaternion.Euler(0, CP.GetPlayer().GetQuaternioin(), 0)) as GameObject;
     }
 }

@@ -19,4 +19,11 @@ public class test : MonoBehaviour
     public Text t;
 
     public int num;
+
+    public LayerMask layerMask;
+
+    private void Start()
+    {
+        Debug.Log(layerMask);
+    }
 }

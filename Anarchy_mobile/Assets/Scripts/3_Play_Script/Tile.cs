@@ -33,6 +33,7 @@ public class Tile : MonoBehaviourPun
     int occupatedScore;
 
     Utility             UT = new Utility();
+    Player              player = CentralProcessor.Instance.GetPlayer();
     UIManager           UI;
     CentralProcessor    CP;
 
@@ -49,7 +50,7 @@ public class Tile : MonoBehaviourPun
 
     public void GetTileMoney()
     {
-        if(this.gameObject.layer == CP.player.GetLayer())
+        if(this.gameObject.layer == player.GetLayer())
         {
             int money = CP.GetMoney() + gold;
             CP.SetMoney(money);
@@ -63,7 +64,7 @@ public class Tile : MonoBehaviourPun
         CP.currentTile.minimap_Tile.color = CP.minimapNormalColor;
         CP.currentTile = this.gameObject.GetComponent<Tile>();
         CP.currentTile.ShowOcc();
-        this.minimap_Tile.color = CP.player.GetPlayerColor();
+        this.minimap_Tile.color = player.GetPlayerColor();
     }
 
     public void DisappearOcc()
@@ -106,5 +107,66 @@ public class Tile : MonoBehaviourPun
     public int GetOccupatedScore()
     {
         return occupatedScore;
+    }
+
+    public void SetOcupatedScore(MyUnit unit)
+    {
+        if (unit.gameObject.layer == player.GetLayer())
+            occupatedScore += unit.occScore;
+    }
+
+    public void SetOcupatedScore(int score)
+    {
+        occupatedScore = score;
+    }
+
+    public bool GetCheckPos(int n, int layer)
+    {
+        if(layer == 7)
+            return isP1_unitArea[n];
+        else
+            return isP2_unitArea[n];
+    }
+
+    public void SetCheckPos(int n, bool check, int layer)
+    {
+        if(layer == 7)
+            isP1_unitArea[n] = check;
+        else
+            isP2_unitArea[n] = check;
+    }
+
+    public void SetUnits(MyUnit unit, int n, int layer)
+    {
+        if (layer == 7)
+            P1_units[n] = unit;
+        else
+            P2_units[n] = unit;
+    }
+
+    private void SetUnits(int n, int layer)
+    {
+        if (layer == 7)
+            P1_units[n] = null;
+        else
+            P2_units[n] = null;
+    }
+
+    public void DeleteUnit(MyUnit unit)
+    {
+        SetCheckPos(unit.areaPosNumber, false, unit.gameObject.layer);
+        SetUnits(unit.areaPosNumber, unit.gameObject.layer);
+        if(unit.gameObject.layer == 7)
+            MoveMapButton.GetComponent<MoveUnit>().p1unit[unit.areaPosNumber].gameObject.SetActive(false);
+        else
+            MoveMapButton.GetComponent<MoveUnit>().p2unit[unit.areaPosNumber].gameObject.SetActive(false);
+    }
+
+    public void CheckTileOwner(bool p1, bool p2)
+    {
+        isP1Tile = p1;
+        isP2Tile = p2;
+        UT.SetActive(transform.Find("flag_Blue"), p1);
+        UT.SetActive(transform.Find("flag_Red"), p2);
     }
 }

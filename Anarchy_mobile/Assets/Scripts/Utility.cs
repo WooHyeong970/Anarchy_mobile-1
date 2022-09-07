@@ -33,6 +33,11 @@ namespace AnarchyUtility
         {
             ps.gameObject.SetActive(b);
         }
+
+        public void SetActive(Transform ts, bool b)
+        {
+            ts.gameObject.SetActive(b);
+        }
         #endregion
 
         public bool CheckCost(int cost, int money)
@@ -54,15 +59,25 @@ namespace AnarchyUtility
 
         public void SetManager(ref UIManager UI, ref CentralProcessor CP, ref VariableManager VM)
         {
-            UI = CentralProcessor.Instance.uIManager;
+            UI = CentralProcessor.Instance.UI;
             CP = CentralProcessor.Instance;
             VM = VariableManager.Instance;
         }
 
         public void SetManager(ref UIManager UI, ref CentralProcessor CP)
         {
-            UI = CentralProcessor.Instance.uIManager;
+            UI = CentralProcessor.Instance.UI;
             CP = CentralProcessor.Instance;
+        }
+
+        public void SetText(Text text, int n)
+        {
+            text.text = n.ToString();
+        }
+
+        public void SetText(Text text, string str)
+        {
+            text.text = str;
         }
     }
 }

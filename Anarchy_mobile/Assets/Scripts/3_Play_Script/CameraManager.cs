@@ -9,12 +9,12 @@ public class CameraManager : MonoBehaviour
 
     private void Start()
     {
-        this.gameObject.transform.position = CentralProcessor.Instance.player.getCamPoint().position;
+        this.gameObject.transform.position = CentralProcessor.Instance.GetPlayer().GetCamPoint().position;
     }
 
     private void Update()
     {
-        if(CentralProcessor.Instance.uIManager.state == UIManager.State.Idle)
+        if(CentralProcessor.Instance.UI.state == UIManager.State.Idle)
         {
             if(Input.touchCount == 2)
             {

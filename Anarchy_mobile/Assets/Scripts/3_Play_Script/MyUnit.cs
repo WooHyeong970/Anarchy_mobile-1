@@ -6,30 +6,30 @@ using AnarchyUtility;
 
 public class MyUnit : MonoBehaviourPun
 {
-    public int              type;
-    public int              cost;
-    public int              hp;
-    public int activeCost;
-    public Sprite           illust;
+    public int          type;
+    public int          cost;
+    public int          hp;
+    public int          activeCost;
+    public int          defensive;
+    public int          offensive;
+    public Sprite       illust;
+    public string       unitName;
+    public int          accDamage = 0;
     
-    public int              accDamage = 0;
-    public string           unitName;
-    public int              defensive;
-    public int              offensive;
-    public int myNum;
+    public int          areaPosNumber;
+    public Tile         currentTile;
+    //public bool         isAttackready = false;
+    public int        occScore;
 
-    public Tile             currentTile;
-    public bool             isAttackready = false;
+    ParticleSystem      particle;
+    ParticleSystem      attackParticle;
 
-    public ParticleSystem   particleSystem;
-    public ParticleSystem   attackParticle;
+    bool                isClicked;
 
-    bool                    isClicked;
-
-    Utility                 UT = new Utility();
-    UIManager               UI;
-    CentralProcessor        CP;
-    VariableManager         VM;
+    Utility             UT = new Utility();
+    UIManager           UI;
+    CentralProcessor    CP;
+    VariableManager     VM;
 
     public void OnClick()
     {
@@ -60,7 +60,7 @@ public class MyUnit : MonoBehaviourPun
 
     private void Ready()
     {
-        if (this.gameObject.layer == CP.player.GetLayer())
+        if (this.gameObject.layer == CP.GetPlayer().GetLayer())
         {
             StartParticle();
             UT.SetActive(UI.unitButtonPanel, true);
@@ -86,7 +86,7 @@ public class MyUnit : MonoBehaviourPun
 
     private void Attack()
     {
-        if (this.gameObject.layer == CP.player.GetLayer())
+        if (this.gameObject.layer == CP.GetPlayer().GetLayer())
             return;
 
         CP.Attact(CP.currentUnit.GetComponent<PhotonView>().ViewID, this.gameObject.GetComponent<PhotonView>().ViewID);
@@ -94,14 +94,21 @@ public class MyUnit : MonoBehaviourPun
 
     private void StopParticle()
     {
-        particleSystem.Clear();
-        UT.SetActive(particleSystem, false);
+        particle.Clear();
+        UT.SetActive(particle, false);
     }
 
     private void StartParticle()
     {
-        UT.SetActive(particleSystem, true);
-        particleSystem.Play();
+        UT.SetActive(particle, true);
+        particle.Play();
+    }
+
+    public void GetAttack()
+    {
+        hp -= 1;
+        accDamage = 0;
+        attackParticle.Play();
     }
 
     public void ActiveCostUpdate()
