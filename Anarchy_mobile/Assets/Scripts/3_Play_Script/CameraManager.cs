@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    public Camera       gameCamera;
-    public float        orthoZoomSpeed = 0.03f;
+    public Camera   gameCamera;
+    float           orthoZoomSpeed = 0.03f;
 
     private void Start()
     {

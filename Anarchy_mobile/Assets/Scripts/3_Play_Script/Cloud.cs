@@ -6,9 +6,11 @@ using UnityEditor;
 public class Cloud : MonoBehaviour
 {
     Animator animator;
+    CentralProcessor CP;
 
     private void Start()
     {
+        CP = CentralProcessor.Instance;
         animator = this.gameObject.GetComponent<Animator>();
     }
 
@@ -16,15 +18,15 @@ public class Cloud : MonoBehaviour
     {
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Idle"))
         {
-            if (CentralProcessor.Instance.GetPlayer().GetLayer() == 7)
+            if (CP.GetPlayer().GetLayer() == 7)
             {
-                CentralProcessor.Instance.UI.SetIdleState();
-                CentralProcessor.Instance.StartTimer();
+                CP.UI.SetIdleState();
+                CP.StartTimer();
             }
             else
             {
-                CentralProcessor.Instance.UI.SetNextState();
-                CentralProcessor.Instance.StopTimer();
+                CP.UI.SetNextState();
+                CP.StopTimer();
             }
             this.gameObject.SetActive(false);
         }

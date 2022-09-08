@@ -33,9 +33,14 @@ public class Tile : MonoBehaviourPun
     int occupatedScore;
 
     Utility             UT = new Utility();
-    Player              player = CentralProcessor.Instance.GetPlayer();
+    Player              player;
     UIManager           UI;
     CentralProcessor    CP;
+
+    private void Start()
+    {
+        player = CentralProcessor.Instance.GetPlayer();
+    }
 
     public void OnClick()
     {
@@ -44,8 +49,8 @@ public class Tile : MonoBehaviourPun
 
         UI.OffInOf();
         MoveTile();
-        if (UI.state == UIManager.State.Idle)
-            UI.InfoWindowReset();
+        //if (UI.state == UIManager.State.Idle)
+        //    UI.InfoWindowReset();
     }
 
     public void GetTileMoney()
@@ -144,7 +149,7 @@ public class Tile : MonoBehaviourPun
             P2_units[n] = unit;
     }
 
-    private void SetUnits(int n, int layer)
+    public void SetUnits(int n, int layer)
     {
         if (layer == 7)
             P1_units[n] = null;

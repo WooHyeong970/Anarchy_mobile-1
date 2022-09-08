@@ -116,41 +116,41 @@ public class Decision : MonoBehaviourPun
 
     public void ArouseDecision()
     {
-        Btn1.GetComponent<Button>().interactable = true;
-        Btn2.GetComponent<Button>().interactable = true;
-        Btn3.GetComponent<Button>().interactable = true;
-        situationNum = UnityEngine.Random.Range(0, 15);
-        num = RandomNumber(0,5);
-        DecisionPanel.gameObject.SetActive(true);
-        SituationImage.sprite = situationImages[situationNum];
-        DecisionDesc.text = decisionSituation.name[situationNum];
-        Actions action1 = actionMap[(situationNum * 5) + num[0]];
-        decisionBtn_1.text = action1.ReturnDesc();
-        if(ActivationDecision((situationNum * 5) + num[0]))
-        {
-            Btn1.GetComponent<Button>().interactable = false;
-        }
-        Actions action2 = actionMap[(situationNum * 5) + num[1]];
-        decisionBtn_2.text = action2.ReturnDesc();
-        if(ActivationDecision((situationNum * 5) + num[1]))
-        {
-            Btn2.GetComponent<Button>().interactable = false;
-        }
-        Actions action3 = actionMap[(situationNum * 5) + num[2]];
-        decisionBtn_3.text = action3.ReturnDesc();
-        if(ActivationDecision((situationNum * 5) + num[2]))
-        {
-            Btn3.GetComponent<Button>().interactable = false;
-        }
-        CentralProcessor.Instance.uIManager.SetActiveState();
-        if(CentralProcessor.Instance.isMaster)
-        {
-            CentralProcessor.Instance.SumScore(10,0);
-        }
-        else
-        {
-            CentralProcessor.Instance.SumScore(0,10);
-        }
+        //Btn1.GetComponent<Button>().interactable = true;
+        //Btn2.GetComponent<Button>().interactable = true;
+        //Btn3.GetComponent<Button>().interactable = true;
+        //situationNum = UnityEngine.Random.Range(0, 15);
+        //num = RandomNumber(0,5);
+        //DecisionPanel.gameObject.SetActive(true);
+        //SituationImage.sprite = situationImages[situationNum];
+        //DecisionDesc.text = decisionSituation.name[situationNum];
+        //Actions action1 = actionMap[(situationNum * 5) + num[0]];
+        //decisionBtn_1.text = action1.ReturnDesc();
+        //if(ActivationDecision((situationNum * 5) + num[0]))
+        //{
+        //    Btn1.GetComponent<Button>().interactable = false;
+        //}
+        //Actions action2 = actionMap[(situationNum * 5) + num[1]];
+        //decisionBtn_2.text = action2.ReturnDesc();
+        //if(ActivationDecision((situationNum * 5) + num[1]))
+        //{
+        //    Btn2.GetComponent<Button>().interactable = false;
+        //}
+        //Actions action3 = actionMap[(situationNum * 5) + num[2]];
+        //decisionBtn_3.text = action3.ReturnDesc();
+        //if(ActivationDecision((situationNum * 5) + num[2]))
+        //{
+        //    Btn3.GetComponent<Button>().interactable = false;
+        //}
+        //CentralProcessor.Instance.uIManager.SetActiveState();
+        //if(CentralProcessor.Instance.isMaster)
+        //{
+        //    CentralProcessor.Instance.SumScore(10,0);
+        //}
+        //else
+        //{
+        //    CentralProcessor.Instance.SumScore(0,10);
+        //}
     }
 
     public bool ActivationDecision(int num)
@@ -221,67 +221,73 @@ public class Decision : MonoBehaviourPun
         return num;
     }
 
-    public void Decision_1()
-    {
-        Actions action = actionMap[(situationNum * 5) + num[0]];
-        VariableManager.Instance.BuffSelect(action.ReturnBuffNum());
-        DecisionPanel.gameObject.SetActive(false);
-        CentralProcessor.Instance.uIManager.UISetActiveTrue();
-        CentralProcessor.Instance.uIManager.state = UIManager.State.Idle;
-        CentralProcessor.Instance.uIManager.ShowDecisionEffect();
-        CentralProcessor.Instance.uIManager.decision_story.text = action.ReturnEffect();
-        CentralProcessor.Instance.uIManager.decision_effect.text = ReturnBuffStory(num[0]);
-        if(action.ReturnBuffNum() == 15)
-        {
-            return;
-        }
-        else
-        {
-            CentralProcessor.Instance.uIManager.decision_img.sprite = decision_IllustSprite[action.ReturnBuffNum() - 1];
-            AddDecisionIllust(action.ReturnBuffNum());
-        }
-    }
+    //public void Decision_1()
+    //{
+    //    Actions action = actionMap[(situationNum * 5) + num[0]];
+    //    VariableManager.Instance.BuffSelect(action.ReturnBuffNum());
+    //    DecisionPanel.gameObject.SetActive(false);
+    //    CentralProcessor.Instance.uIManager.UISetActiveTrue();
+    //    CentralProcessor.Instance.uIManager.state = UIManager.State.Idle;
+    //    CentralProcessor.Instance.uIManager.ShowDecisionEffect();
+    //    CentralProcessor.Instance.uIManager.decision_story.text = action.ReturnEffect();
+    //    CentralProcessor.Instance.uIManager.decision_effect.text = ReturnBuffStory(num[0]);
+    //    if(action.ReturnBuffNum() == 15)
+    //    {
+    //        return;
+    //    }
+    //    else
+    //    {
+    //        CentralProcessor.Instance.uIManager.decision_img.sprite = decision_IllustSprite[action.ReturnBuffNum() - 1];
+    //        AddDecisionIllust(action.ReturnBuffNum());
+    //    }
+    //}
 
-    public void Decision_2()
-    {
-        Actions action = actionMap[(situationNum * 5) + num[1]];
-        VariableManager.Instance.BuffSelect(action.ReturnBuffNum());
-        DecisionPanel.gameObject.SetActive(false);
-        CentralProcessor.Instance.uIManager.UISetActiveTrue();
-        CentralProcessor.Instance.uIManager.state = UIManager.State.Idle;
-        CentralProcessor.Instance.uIManager.ShowDecisionEffect();
-        CentralProcessor.Instance.uIManager.decision_story.text = action.ReturnEffect();
-        CentralProcessor.Instance.uIManager.decision_effect.text = ReturnBuffStory(num[1]);
-        if(action.ReturnBuffNum() == 15)
-        {
-            return;
-        }
-        else
-        {
-            CentralProcessor.Instance.uIManager.decision_img.sprite = decision_IllustSprite[action.ReturnBuffNum() - 1];
-            AddDecisionIllust(action.ReturnBuffNum());
-        }
-    }
+    //public void Decision_2()
+    //{
+    //    Actions action = actionMap[(situationNum * 5) + num[1]];
+    //    VariableManager.Instance.BuffSelect(action.ReturnBuffNum());
+    //    DecisionPanel.gameObject.SetActive(false);
+    //    CentralProcessor.Instance.uIManager.UISetActiveTrue();
+    //    CentralProcessor.Instance.uIManager.state = UIManager.State.Idle;
+    //    CentralProcessor.Instance.uIManager.ShowDecisionEffect();
+    //    CentralProcessor.Instance.uIManager.decision_story.text = action.ReturnEffect();
+    //    CentralProcessor.Instance.uIManager.decision_effect.text = ReturnBuffStory(num[1]);
+    //    if(action.ReturnBuffNum() == 15)
+    //    {
+    //        return;
+    //    }
+    //    else
+    //    {
+    //        CentralProcessor.Instance.uIManager.decision_img.sprite = decision_IllustSprite[action.ReturnBuffNum() - 1];
+    //        AddDecisionIllust(action.ReturnBuffNum());
+    //    }
+    //}
 
-    public void Decision_3()
+    //public void Decision_3()
+    //{
+    //    Actions action = actionMap[(situationNum * 5) + num[2]];
+    //    VariableManager.Instance.BuffSelect(action.ReturnBuffNum());
+    //    DecisionPanel.gameObject.SetActive(false);
+    //    CentralProcessor.Instance.uIManager.UISetActiveTrue();
+    //    CentralProcessor.Instance.uIManager.state = UIManager.State.Idle;
+    //    CentralProcessor.Instance.uIManager.ShowDecisionEffect();
+    //    CentralProcessor.Instance.uIManager.decision_story.text = action.ReturnEffect();
+    //    CentralProcessor.Instance.uIManager.decision_effect.text = ReturnBuffStory(num[2]);
+    //    if(action.ReturnBuffNum() == 15)
+    //    {
+    //        return;
+    //    }
+    //    else
+    //    {
+    //        CentralProcessor.Instance.uIManager.decision_img.sprite = decision_IllustSprite[action.ReturnBuffNum() - 1];
+    //        AddDecisionIllust(action.ReturnBuffNum());
+    //    }
+    //}
+
+    public void SelectDecisionCase(int n)
     {
-        Actions action = actionMap[(situationNum * 5) + num[2]];
-        VariableManager.Instance.BuffSelect(action.ReturnBuffNum());
-        DecisionPanel.gameObject.SetActive(false);
-        CentralProcessor.Instance.uIManager.UISetActiveTrue();
-        CentralProcessor.Instance.uIManager.state = UIManager.State.Idle;
-        CentralProcessor.Instance.uIManager.ShowDecisionEffect();
-        CentralProcessor.Instance.uIManager.decision_story.text = action.ReturnEffect();
-        CentralProcessor.Instance.uIManager.decision_effect.text = ReturnBuffStory(num[2]);
-        if(action.ReturnBuffNum() == 15)
-        {
-            return;
-        }
-        else
-        {
-            CentralProcessor.Instance.uIManager.decision_img.sprite = decision_IllustSprite[action.ReturnBuffNum() - 1];
-            AddDecisionIllust(action.ReturnBuffNum());
-        }
+        Actions action = actionMap[(situationNum * 5) + num[n]];
+
     }
 
     public string ReturnBuffStory(int n)
@@ -341,9 +347,9 @@ public class Decision : MonoBehaviourPun
 
     public void AddDecisionIllust(int num)
     {
-        GameObject img = Instantiate(decision_Illust);
-        img.GetComponent<Image>().sprite = decision_IllustSprite[num - 1];
-        img.transform.parent = decision_list.transform;
+        //GameObject img = Instantiate(decision_Illust);
+        //img.GetComponent<Image>().sprite = decision_IllustSprite[num - 1];
+        //img.transform.parent = decision_list.transform;
     }
 
     public class Actions

@@ -5,16 +5,17 @@ using AnarchyUtility;
 
 public class MyBuilding : MonoBehaviour
 {
-    public int level;
+    public int          level;
     [TextArea]
-    public string desc;
-    public string buildingName;
-    public Sprite illust;
+    public string       desc;
+    public string       buildingName;
+    public Sprite       illust;
     
-    bool isClicked;
-    Utility UT = new Utility();
-    UIManager UI;
-    CentralProcessor CP;
+    bool                isClicked;
+
+    Utility             UT = new Utility();
+    UIManager           UI;
+    CentralProcessor    CP;
 
     public void OnClick()
     {

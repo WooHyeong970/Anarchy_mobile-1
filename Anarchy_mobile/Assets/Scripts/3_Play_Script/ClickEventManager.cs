@@ -24,17 +24,11 @@ public class ClickEventManager : MonoBehaviour
             if (Physics.Raycast(ray, out hit, Mathf.Infinity))
             {
                 if(tagName == "Unit")
-                {
                     hit.transform.GetComponent<MyUnit>().OnClick();
-                }
                 else if(tagName == "Building")
-                {
                     hit.transform.GetComponent<MyBuilding>().OnClick();
-                }
                 else if(tagName == "Tile")
-                {
-                    //hit.transform.GetComponent<Tile>().OnClick();
-                }
+                    hit.transform.GetComponent<Tile>().OnClick();
             }
         }
     }

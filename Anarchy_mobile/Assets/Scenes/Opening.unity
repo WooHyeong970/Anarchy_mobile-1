@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -152,6 +152,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1167736443}
   m_Father: {fileID: 2022725022}
@@ -207,8 +208,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2022725023}
-        m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: Title
+        m_TargetAssemblyTypeName: OpeningScript, Assembly-CSharp
+        m_MethodName: GoTitle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -345,6 +346,7 @@ Transform:
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -509,6 +511,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 203.23329, y: 289.74768, z: -368.25412}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
@@ -555,6 +558,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2022725022}
   m_RootOrder: 0
@@ -630,6 +634,7 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 113838965}
   m_RootOrder: 0
@@ -743,6 +748,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -826,6 +832,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -921,6 +928,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1136357896}
   - {fileID: 113838965}
@@ -941,51 +949,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 2022725018}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcf1364d98d79c240bc7febb3dcc12c9, type: 3}
+  m_Script: {fileID: 11500000, guid: db18f26ccdf6843229cdacde90402c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChooseforcePanel: {fileID: 0}
-  ChoosemapPanel: {fileID: 0}
-  nextButton: {fileID: 0}
-  close_window: {fileID: 0}
-  build_window: {fileID: 0}
-  exit_window: {fileID: 0}
-  setting_window: {fileID: 0}
-  movemap_window: {fileID: 0}
-  movecameramp_window: {fileID: 0}
-  unit_window: {fileID: 0}
-  decision_window: {fileID: 0}
-  gameover: {fileID: 0}
-  ui: []
-  s_map: {fileID: 0}
-  b_map: {fileID: 0}
-  money: {fileID: 0}
-  errorMessage: {fileID: 0}
-  FadeTime: 1
-  unitInfo_panel: {fileID: 0}
-  unit_illust: {fileID: 0}
-  unit_hp: []
-  unit_activeCost: {fileID: 0}
-  unit_name: {fileID: 0}
-  HP: {fileID: 0}
-  unit_ATK: {fileID: 0}
-  unit_DEF: {fileID: 0}
-  unitButtonPanel: {fileID: 0}
-  buildingInfo_panel: {fileID: 0}
-  buildingName: {fileID: 0}
-  buildingIllust: {fileID: 0}
-  buildingLevels: []
-  buildingEffects: []
-  mapButtons: []
-  move_nextButton: {fileID: 0}
-  tile_unitPanel: {fileID: 0}
-  offAttackButton: {fileID: 0}
-  decision_img: {fileID: 0}
-  decision_story: {fileID: 0}
-  decision_effect: {fileID: 0}
-  exitButton: {fileID: 0}
-  settingButton: {fileID: 0}
-  checkWindow: {fileID: 0}
-  checkWindowtext: {fileID: 0}
-  state: 2
-  videoPlayer: {fileID: 0}

@@ -17,15 +17,15 @@ public class DecisionIcon : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        if(CentralProcessor.Instance.uIManager.state != UIManager.State.Idle)
+        if(CentralProcessor.Instance.UI.state != UIManager.State.Idle)
         {
             return;
         }
 
-        if((isP1Decision && !CentralProcessor.Instance.isMaster) || (isP2Decision && CentralProcessor.Instance.isMaster))
-        {
-            return;
-        }
+        //if((isP1Decision && !CentralProcessor.Instance.UI) || (isP2Decision && CentralProcessor.Instance.isMaster))
+        //{
+        //    return;
+        //}
 
         VariableManager.Instance.GetComponent<Decision>().ArouseDecision();
         this.gameObject.SetActive(false);

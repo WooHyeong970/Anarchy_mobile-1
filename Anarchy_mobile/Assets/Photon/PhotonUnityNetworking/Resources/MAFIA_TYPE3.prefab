@@ -53,17 +53,18 @@ MonoBehaviour:
   type: 3
   cost: 250
   hp: 0
-  illust: {fileID: 21300000, guid: 1f43b832babfbf04bb4f72e9fc323c7f, type: 3}
   activeCost: 6
-  accDamage: 0
-  unit_name: Mafia_norm
-  myNum: 0
   defensive: 104
   offensive: 56
+  illust: {fileID: 21300000, guid: 1f43b832babfbf04bb4f72e9fc323c7f, type: 3}
+  unitName: 
+  accDamage: 0
+  areaPosNumber: 0
   currentTile: {fileID: 0}
-  isAttackready: 0
-  particleSystem: {fileID: 440931809431912271, guid: 54f1f5032a11b5a4cbef5798bdc77bfd, type: 3}
-  attackParticle: {fileID: 8225257503996324723, guid: 54f1f5032a11b5a4cbef5798bdc77bfd, type: 3}
+  occScore: 0
+  particle: {fileID: 259172610827229509}
+  attackParticle: {fileID: 79019220118550638}
+  isClicked: 0
 --- !u!114 &-6600907765160857598
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,6 +182,11 @@ PrefabInstance:
 --- !u!4 &96495622206723687 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 257049086216807431, guid: d89bc24603ad7b64bac1344ff74f4c29, type: 3}
+  m_PrefabInstance: {fileID: 200386586427896416}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &259172610827229509 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 98848930788780837, guid: d89bc24603ad7b64bac1344ff74f4c29, type: 3}
   m_PrefabInstance: {fileID: 200386586427896416}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2856656733169259877
@@ -306,6 +312,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 049a8aeb0b21a0445bc4d427b2bd18b6, type: 3}
+--- !u!198 &79019220118550638 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 4861851526756899314, guid: 049a8aeb0b21a0445bc4d427b2bd18b6, type: 3}
+  m_PrefabInstance: {fileID: 4782963248398934428}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &263490640377316578 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4740149576202560894, guid: 049a8aeb0b21a0445bc4d427b2bd18b6, type: 3}

@@ -57,7 +57,6 @@ public class CreateBuilding : MonoBehaviourPunCallbacks
         GameObject _building = InstantiateBuilding(type, level);
         buildings[type - 1] = _building;
 
-        //CP.currentBuildings[type - 1] = _building.GetComponent<MyBuilding>();
         illust[type - 1].sprite = Resources.Load<Sprite>("BuildingIllusts/TYPE_" + type.ToString() + "_" + (level + 1).ToString());
         levelTexts[type - 1].text = "X " + levels[type - 1].ToString();
 
@@ -71,20 +70,20 @@ public class CreateBuilding : MonoBehaviourPunCallbacks
             return;
         }
 
-        if (VM.isBuildCostEffect && VM.buildEffects.Count == 0)
-        {
-            VM.isBuildCostEffect = false;
-            VM.BuildingCostEffect(-VM.currentBuff);
-            VM.isBuildCostEffect = false;
-        }
-        else if (VM.isBuildCostEffect && VM.buildEffects.Count > 0)
-        {
-            VM.isBuildCostEffect = false;
-            VM.BuildingCostEffect(-VM.currentBuff);
-            VM.isBuildCostEffect = false;
-            var n = VM.buildEffects.Dequeue();
-            VM.BuildingCostEffect(n);
-        }
+        //if (VM.isBuildCostEffect && VM.buildEffects.Count == 0)
+        //{
+        //    VM.isBuildCostEffect = false;
+        //    VM.BuildingCostEffect(-VM.currentBuff);
+        //    VM.isBuildCostEffect = false;
+        //}
+        //else if (VM.isBuildCostEffect && VM.buildEffects.Count > 0)
+        //{
+        //    VM.isBuildCostEffect = false;
+        //    VM.BuildingCostEffect(-VM.currentBuff);
+        //    VM.isBuildCostEffect = false;
+        //    var n = VM.buildEffects.Dequeue();
+        //    VM.BuildingCostEffect(n);
+        //}
     }
 
     GameObject InstantiateBuilding(int type, int level)

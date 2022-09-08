@@ -9,67 +9,19 @@ using AnarchyUtility;
 
 public class UIManager : MonoBehaviourPun
 {
-    //public Image        ChooseforcePanel;
-    //public Image        ChoosemapPanel;
-    //public Button       nextButton;
-    //public Button       close_window;
-    //public GameObject   build_window;
-    //public GameObject   exit_window;
-    //public GameObject   setting_window;
-    //public GameObject   movemap_window;
-    //public GameObject   movecameramp_window;
-    //public GameObject   unit_window;
-    //public GameObject   decision_window;
-    //public GameObject   gameover;
-    public GameObject[] ui;
-    //public Image        s_map; // 작은 지도
-    //public Image        b_map; // 이동버튼 눌렀을 때 나오는 큰 지도
-    //public Text     money;
-    //public Text     errorMessage; // 유닛이나 건물을 생산할 때 재화,자리가 부족하면 나오는 에러메세지
-    //float           time;
-    //float           start = 1f;
-    //float           end = 0f;
-    //public float    FadeTime = 1f;
-    //GameObject[]    window;
-    //public Image    unitInfo_panel;
-    //public Image    unit_illust;
-    //public Image[]  unit_hp;
-    //public Text     unit_activeCost;
-    //public Text     unit_name;
-    //public Text     HP;
-    //public Text     unit_ATK;
-    //public Text     unit_DEF;
-    //public Image    unitButtonPanel;
-    //public Image    buildingInfo_panel;
-    //public Text     buildingName;
-    //public Image    buildingIllust;
-    //public Image[]  buildingLevels;
-    //public Text[]   buildingEffects;
-    public Button[] mapButtons;
-    //public Button   move_nextButton;
-    //public Image    tile_unitPanel;
-    //public Button   offAttackButton;
-    //public Image    decision_img;
-    //public Text     decision_story;
-    //public Text     decision_effect;
-    //public Button   exitButton;
-    //public Button   settingButton;    
-    //public Image    checkWindow;
-    //public Text     checkWindowtext;
-    //public Text     BGMOnOffText;
-    //public Text buildingEffect;
-
-    //bool isIgnoreCheck;
-    //IEnumerator errorMessageCo;
+    
 
     // variable
     //================================================================================
     Utility UT = new Utility();
+    Decision decision = new Decision();
 
     public enum State { Ready, Next, Idle, Active, Attack, End };
     public State state = State.Idle;
 
     public Cloud cloud;
+
+    public GameObject[] ui;
 
     public Image[] unitHP = new Image[3];
     public Image[] buildingLevels = new Image[3];
@@ -79,17 +31,17 @@ public class UIManager : MonoBehaviourPun
     public Image unitButtonPanel;
     public Image buildingInfoPanel;
     public Image buildingIllust;
-    public Image closeWindow;
-    public Image settingWindow;
-    public Image exitWindow;
-    public Image unitWindow;
-    public Image buildWindow;
-    public Image moveCameraMapWindow;
-    public Image movemapWindow;
     public Image decisionWindow;
-    public Image gameoverWindow;
     public Image checkWindow;
-    public Image decisionList;
+
+    public GameObject settingWindow;
+    public GameObject exitWindow;
+    public GameObject unitWindow;
+    public GameObject buildWindow;
+    public GameObject moveCameraMapWindow;
+    public GameObject movemapWindow;
+    public GameObject gameoverWindow;
+    public GameObject decisionList;
 
     public Text curMoney;
     public Text waitingText;
@@ -106,24 +58,55 @@ public class UIManager : MonoBehaviourPun
     public Text checkWindowText;
     public Text timer;
 
-    public Button settingButton;
-    public Button exitButton;
-    public Button unitButton;
-    public Button buildButton;
-    public Button moveMinimapButton;
+    public Button[] mapButtons;
+
+    [Header("UI Buttons")]
+    [SerializeField]
+    private Button closeWindow;
+    [SerializeField]
+    private Button settingButton;
+    [SerializeField]
+    private Button exitButton;
+    [SerializeField]
+    private Button turnEndButton;
+    [SerializeField]
+    private Button unitButton;
+    [SerializeField]
+    private Button buildButton;
+    [SerializeField]
+    private Button moveMinimapButton;
+    [SerializeField]
+    private Button decisionButton;
+    [SerializeField]
+    private Button offAttackButton;
+    [SerializeField]
+    private Button unitMoveButton;
+    [SerializeField]
+    private Button unitAttackButton;
+
+    [Header("Decision Select")]
+    [SerializeField]
+    private Button decisionCase1;
+    [SerializeField]
+    private Button decisionCase2;
+    [SerializeField]
+    private Button decisionCase3;
+
+
+
     public Button costIgnoreButton;
-    public Button decisionButton;
+    
     public Button moveButton;
     public Button currentMoveButton;
-    public Button offAttackButton;
+    
     public Button BGMOnOffButton;
 
     Color errorMessageColor = new Color();
     IEnumerator errorMessageCo;
 
     float time;
-    float start = 0;
-    float end = 1f;
+    float start = 1f;
+    float end = 0f;
     float fadeTime = 1f;
 
     bool isIgnoreCheck;
@@ -136,6 +119,7 @@ public class UIManager : MonoBehaviourPun
         ButtonBinding();
         SetReadyState();
         errorMessageCo = fadeoutErrorMessage();
+        errorMessageColor = Color.red;
     }
 
     private void Update()
@@ -150,16 +134,34 @@ public class UIManager : MonoBehaviourPun
                 OffReadyAttack();
         }
     }
-
     private void ButtonBinding()
     {
+        //
+        // UI Buttons Binding
+        //
+        closeWindow.onClick.AddListener(() => SetIdleState());
         settingButton.onClick.AddListener(() => SettingButtonClick());
         exitButton.onClick.AddListener(() => ExitButtonClick());
+        turnEndButton.onClick.AddListener(() => CentralProcessor.Instance.CheckTurn());
         unitButton.onClick.AddListener(() => UnitButtonClick());
         buildButton.onClick.AddListener(() => BuildButtonClick());
-        costIgnoreButton.onClick.AddListener(() => IgnoreActiveCostCheck());
         moveMinimapButton.onClick.AddListener(() => MinimapButtonClick());
         decisionButton.onClick.AddListener(() => DecisionButtonClick());
+        offAttackButton.onClick.AddListener(() => OffReadyAttack());
+        unitMoveButton.onClick.AddListener(() => MoveButtonClick());
+        unitAttackButton.onClick.AddListener(() => ReadyAttack());
+
+        //
+        // Decision Select
+        //
+        //decisionCase1.onClick.AddListener(() => decision.SelectDecisionCase(0));
+        //decisionCase2.onClick.AddListener(() => decision.SelectDecisionCase(1));
+        //decisionCase3.onClick.AddListener(() => decision.SelectDecisionCase(2));
+
+
+        costIgnoreButton.onClick.AddListener(() => IgnoreActiveCostCheck());
+        
+        
         moveButton.onClick.AddListener(() => MoveButtonClick());
         BGMOnOffButton.onClick.AddListener(() => BGMOnOff());
     }
@@ -336,6 +338,7 @@ public class UIManager : MonoBehaviourPun
 
     public void SetIdleState()
     {
+        CentralProcessor.Instance.effectSoundManager.PlayButtonClickSound();
         state = State.Idle;
         WindowSetActiveFalse();
         UISetActiveTrue();
@@ -407,9 +410,9 @@ public class UIManager : MonoBehaviourPun
         if (CentralProcessor.Instance.currentUnit.activeCost == 0)
             return;
         SetAttackState();
-        unitInfoPanel.gameObject.SetActive(false);
-        unitButtonPanel.gameObject.SetActive(false);
-        offAttackButton.gameObject.SetActive(true);
+        UT.SetActive(unitInfoPanel, false);
+        UT.SetActive(unitButtonPanel, false);
+        UT.SetActive(offAttackButton, true);
     }
 
     public void OffReadyAttack()
@@ -470,6 +473,7 @@ public class UIManager : MonoBehaviourPun
     //================================================================================
     IEnumerator fadeoutErrorMessage()
     {
+        errorMessage.gameObject.SetActive(true);
         Color fadecolor = errorMessageColor;
         time = 0f;
         fadecolor.a = Mathf.Lerp(start, end, time);
@@ -485,98 +489,85 @@ public class UIManager : MonoBehaviourPun
     }
     //================================================================================
 
-
-    
-
-    
-
-    public VideoPlayer videoPlayer;
-
-    
-
-    
-
-    
-
-
-    
-
-    
-
-    
-
     public void MoveUnit()
     {
-        if(CentralProcessor.Instance.current_moveButton == null)
-        {
-            return;
-        }
-
-        Transform[] area;
-        bool[] isEmpty;
-
-        if(CentralProcessor.Instance.isMaster)
-        {
-            area = CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.P1_unitArea;
-            isEmpty = CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.isP1_unitArea;
-        }
-        else
-        {
-            area = CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.P2_unitArea;
-            isEmpty = CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.isP2_unitArea;
-        }
-
-        if(isEmpty[0] && isEmpty[1] && isEmpty[2])
-        {
-            return;
-        }
-        if(CentralProcessor.Instance.isMaster)
-        {
-            CentralProcessor.Instance.CheckUnitArea(7, CentralProcessor.Instance.currentTile.gameObject.GetComponent<PhotonView>().ViewID,false,CentralProcessor.Instance.currentUnit.myNum);
-        }
-        else
-        {
-            CentralProcessor.Instance.CheckUnitArea(8, CentralProcessor.Instance.currentTile.gameObject.GetComponent<PhotonView>().ViewID,false,CentralProcessor.Instance.currentUnit.myNum);
-        }
-        CentralProcessor.Instance.CheckTileUnits(CentralProcessor.Instance.currentTile.gameObject.GetComponent<PhotonView>().ViewID, CentralProcessor.Instance.currentUnit.gameObject.GetComponent<PhotonView>().ViewID, CentralProcessor.Instance.currentUnit.myNum, CentralProcessor.Instance.isMaster, false);
-
         for(int i = 0; i < 3; i++)
         {
-            if(isEmpty[i] == false)
+            if(!CentralProcessor.Instance.targetTile.GetCheckPos(i, CentralProcessor.Instance.GetPlayer().GetLayer()))
             {
-                if(CentralProcessor.Instance.isMaster)
-                {
-                    CentralProcessor.Instance.CheckUnitArea(7, CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.GetComponent<PhotonView>().ViewID,true,i);
-                }
-                else
-                {
-                    CentralProcessor.Instance.CheckUnitArea(8, CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.GetComponent<PhotonView>().ViewID,true,i);
-                }
-                //CentralProcessor.Instance.CheckUnitArea(CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.GetComponent<PhotonView>().ViewID,true,i,CentralProcessor.Instance.isMaster);
-                CentralProcessor.Instance.CheckTileUnits(CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.GetComponent<PhotonView>().ViewID, CentralProcessor.Instance.currentUnit.GetComponent<PhotonView>().ViewID, i, CentralProcessor.Instance.isMaster, true);
-                CentralProcessor.Instance.currentUnit.transform.position = area[i].position;
-                //CentralProcessor.Instance.currentUnit.currentTile = CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile;
-                CentralProcessor.Instance.ApplyUnitCurrentTile(CentralProcessor.Instance.currentUnit.GetComponent<PhotonView>().ViewID, CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.GetComponent<PhotonView>().ViewID);
-                //CentralProcessor.Instance.currentUnit.activeCost -= CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().cost;
-                CentralProcessor.Instance.ApplyUnitActiveCost(CentralProcessor.Instance.currentUnit.GetComponent<PhotonView>().ViewID, -CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().cost);
-                //CentralProcessor.Instance.CurrentUnitNull();
-                CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().ChangeColor(Color.black);
-                CentralProcessor.Instance.current_moveButton = null;
-                CentralProcessor.Instance.uIManager.SetIdleState();
-                CentralProcessor.Instance.uIManager.UISetActiveTrue();
-                CentralProcessor.Instance.effectSoundManager.PlayMoveSound();
+                CentralProcessor.Instance.Move(CentralProcessor.Instance.currentUnit, i);
                 return;
             }
         }
+        
+
+
+
+
+
+
+
+
+        //if(CentralProcessor.Instance.current_moveButton == null)
+        //{
+        //    return;
+        //}
+
+        //Transform[] area;
+        //bool[] isEmpty;
+
+        //if(CentralProcessor.Instance.isMaster)
+        //{
+        //    area = CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.P1_unitArea;
+        //    isEmpty = CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.isP1_unitArea;
+        //}
+        //else
+        //{
+        //    area = CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.P2_unitArea;
+        //    isEmpty = CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.isP2_unitArea;
+        //}
+
+        //if(isEmpty[0] && isEmpty[1] && isEmpty[2])
+        //{
+        //    return;
+        //}
+        //if(CentralProcessor.Instance.isMaster)
+        //{
+        //    CentralProcessor.Instance.CheckUnitArea(7, CentralProcessor.Instance.currentTile.gameObject.GetComponent<PhotonView>().ViewID,false,CentralProcessor.Instance.currentUnit.myNum);
+        //}
+        //else
+        //{
+        //    CentralProcessor.Instance.CheckUnitArea(8, CentralProcessor.Instance.currentTile.gameObject.GetComponent<PhotonView>().ViewID,false,CentralProcessor.Instance.currentUnit.myNum);
+        //}
+        //CentralProcessor.Instance.CheckTileUnits(CentralProcessor.Instance.currentTile.gameObject.GetComponent<PhotonView>().ViewID, CentralProcessor.Instance.currentUnit.gameObject.GetComponent<PhotonView>().ViewID, CentralProcessor.Instance.currentUnit.myNum, CentralProcessor.Instance.isMaster, false);
+
+        //for(int i = 0; i < 3; i++)
+        //{
+        //    if(isEmpty[i] == false)
+        //    {
+        //        if(CentralProcessor.Instance.isMaster)
+        //        {
+        //            CentralProcessor.Instance.CheckUnitArea(7, CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.GetComponent<PhotonView>().ViewID,true,i);
+        //        }
+        //        else
+        //        {
+        //            CentralProcessor.Instance.CheckUnitArea(8, CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.GetComponent<PhotonView>().ViewID,true,i);
+        //        }
+        //        //CentralProcessor.Instance.CheckUnitArea(CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.GetComponent<PhotonView>().ViewID,true,i,CentralProcessor.Instance.isMaster);
+        //        CentralProcessor.Instance.CheckTileUnits(CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.GetComponent<PhotonView>().ViewID, CentralProcessor.Instance.currentUnit.GetComponent<PhotonView>().ViewID, i, CentralProcessor.Instance.isMaster, true);
+        //        CentralProcessor.Instance.currentUnit.transform.position = area[i].position;
+        //        //CentralProcessor.Instance.currentUnit.currentTile = CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile;
+        //        CentralProcessor.Instance.ApplyUnitCurrentTile(CentralProcessor.Instance.currentUnit.GetComponent<PhotonView>().ViewID, CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().pairTile.GetComponent<PhotonView>().ViewID);
+        //        //CentralProcessor.Instance.currentUnit.activeCost -= CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().cost;
+        //        CentralProcessor.Instance.ApplyUnitActiveCost(CentralProcessor.Instance.currentUnit.GetComponent<PhotonView>().ViewID, -CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().cost);
+        //        //CentralProcessor.Instance.CurrentUnitNull();
+        //        CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().ChangeColor(Color.black);
+        //        CentralProcessor.Instance.current_moveButton = null;
+        //        CentralProcessor.Instance.uIManager.SetIdleState();
+        //        CentralProcessor.Instance.uIManager.UISetActiveTrue();
+        //        CentralProcessor.Instance.effectSoundManager.PlayMoveSound();
+        //        return;
+        //    }
+        //}
     }
-
-    
-
-    
-
-    
-
-    
-
-    
 }

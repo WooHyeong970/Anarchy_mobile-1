@@ -14,48 +14,48 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     {
         get
         {
-            if(instance == null) instance = FindObjectOfType<CentralProcessor>();
+            if (instance == null) instance = FindObjectOfType<CentralProcessor>();
 
             return instance;
         }
     }
 
     private static CentralProcessor instance;
-    public CameraManager    cameraManager;
-    public UIManager        UI;
-    public EffectSoundManager   effectSoundManager;
+    public CameraManager cameraManager;
+    public UIManager UI;
+    public EffectSoundManager effectSoundManager;
     //public Text             whoseTurnText;
     //public Text             currentTurn;
     //public bool             isMaster;
-    
-    
+
+
     //public MyUnit           currentUnit;
     //public MyUnit           currentEnemy;
     //public MyBuilding       currentBuilding;
     //public Tile             P1_core_Tile;
     //public Tile             P2_core_Tile;
-    
-    
+
+
     //public Button           current_moveButton;
     public Tile[] tiles;
     //public MyBuilding[]     currentBuildings = new MyBuilding[3];
     //public int              createUnitNumber = 3;
     //public int              buildCnt = 1;
     //public Image            waitingPanel;
-    
+
     //public Queue            que = new Queue();
     //public Cloud            cloud;
     //public Button           decisionButton;
     //public bool             firstDecision = false;
     //public Text             timer;
     //public float            time = 10;
-    //public Color minimapNormalColor;
+    public Color minimapNormalColor;
     //private float           selectCount;
     ////public IEnumerator      t;
     //public bool             isIgnoreCheck = true;
-    
+
     //[SerializeField]
-    
+
 
     //public int              P1_score = 0;
     //public int              P2_score = 0;
@@ -67,7 +67,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     //public int              P2_totalMoney = 0;
     //public int              P1_totalOccupation = 0;
     //public int              P2_totalOccupation = 0;
-    
+
     //public Text             p1_score;
     //public Text             p2_score;
     //public Text             p1_unit;
@@ -88,38 +88,40 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     //================================================================================
     // variable
     //================================================================================
-    Utility             UT = new Utility();
+    Utility UT = new Utility();
 
-    enum PlayState      { ready, play };
-    PlayState           playState;
+    enum PlayState { ready, play };
+    PlayState playState;
 
-    enum WhoseTurn      { PLAYER1 = 7, PLAYER2 };
-    WhoseTurn           whoseTurn;
+    enum WhoseTurn { PLAYER1 = 7, PLAYER2 };
+    WhoseTurn whoseTurn;
 
-    bool                isPlay = true;
-    bool                isWaiting = true;
+    bool isPlay = true;
+    bool isWaiting = true;
     //public Text         waitingText;
 
-    public Tile         currentTile;
-    int                 money;
-    int unitCnt;
-    int buildCnt;
+    public Tile currentTile;
+    [SerializeField]
+    int money;
+    int unitCnt = 3;
+    int buildCnt = 1;
 
     float selectCount;
     int time = 180;
-    int                 turnNumber = 0;
+    int turnNumber = 0;
     //public Text         turnEndText;
     int score;
     int kill;
 
     public MyUnit currentUnit;
     public MyBuilding currentBuilding;
+    public Tile targetTile;
 
-    public IEnumerator  t;
+    public IEnumerator t;
 
-    Player              player;
-    public Player       p1Player;
-    public Player       p2Player;
+    Player player;
+    public Player p1Player;
+    public Player p2Player;
     //================================================================================
     // Monobehaviour functions
     //================================================================================
@@ -146,7 +148,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        if(isWaiting)
+        if (isWaiting)
         {
             if (PhotonNetwork.PlayerList.Length > 1)
             {
@@ -220,12 +222,12 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
 
     private bool CheckDecision()
     {
-        Decision[] decisions = GameObject.FindObjectsOfType<Decision>();
-        foreach (Decision d in decisions)
-        {
-            if (d.isDecisionActive && (player.GetLayer() == d.layer))
-                return true;
-        }
+        //Decision[] decisions = GameObject.FindObjectsOfType<Decision>();
+        //foreach (Decision d in decisions)
+        //{
+        //    if (d.isDecisionActive && (player.GetLayer() == d.layer))
+        //        return true;
+        //}
 
         return false;
     }
@@ -256,7 +258,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
 
     private void GetScore(MyUnit unit)
     {
-        if(unit.gameObject.layer != player.GetLayer())
+        if (unit.gameObject.layer != player.GetLayer())
         {
             score += 50;
             kill++;
@@ -265,7 +267,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
 
     private void ShowDecisionIcon(Tile tile)
     {
-        if(tile.gameObject.layer == player.GetLayer())
+        if (tile.gameObject.layer == player.GetLayer())
         {
             tile.decisionIcon.GetComponent<DecisionIcon>().layer = player.GetLayer();
             UT.SetActive(tile.decisionIcon, true);
@@ -372,6 +374,16 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     {
         int id = building.GetComponent<PhotonView>().ViewID;
         photonView.RPC("DestroyBuildingRPC", RpcTarget.All, id);
+    }
+
+    public void Move(MyUnit unit, int number)
+    {
+        int id = unit.GetComponent<PhotonView>().ViewID;
+        int curId = currentTile.GetComponent<PhotonView>().ViewID;
+        int targetId = targetTile.GetComponent<PhotonView>().ViewID;
+        photonView.RPC("MoveRPC", RpcTarget.All, id, curId, targetId, number);
+        currentTile = targetTile;
+        targetTile = null;
     }
     #endregion
     //================================================================================
@@ -535,6 +547,39 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
             }
         }
     }
+
+    [PunRPC]
+    private void MoveRPC(int id, int curId, int targetId, int num)
+    {
+        Tile[] tiles = FindObjectsOfType<Tile>();
+        Tile curTile = new Tile();
+        Tile target = new Tile();
+        foreach(Tile tile in tiles)
+        {
+            if (tile.GetComponent<PhotonView>().ViewID == curId)
+                curTile = tile;
+            if (tile.GetComponent<PhotonView>().ViewID == targetId)
+                target = tile;
+        }
+        MyUnit[] units = FindObjectsOfType<MyUnit>();
+        foreach (MyUnit unit in units)
+        {
+            if (id == unit.GetComponent<PhotonView>().ViewID)
+            {
+                if (unit.gameObject.layer == 7)
+                    unit.transform.position = target.P1_unitArea[num].position;
+                else
+                    unit.transform.position = target.P2_unitArea[num].position;
+                curTile.SetCheckPos(unit.areaPosNumber, false, unit.gameObject.layer);
+                curTile.SetUnits(unit.areaPosNumber, unit.gameObject.layer);
+                target.SetCheckPos(num, true, unit.gameObject.layer);
+                target.SetUnits(unit, num, unit.gameObject.layer);
+                unit.areaPosNumber = num;
+                UI.SetIdleState();
+                return;
+            }
+        }
+    }
     #endregion
     //================================================================================
     //================================================================================
@@ -578,23 +623,23 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
 
     public void ApplyCreateUnitVariable(int id, int type)
     {
-        switch(type)
+        switch (type)
         {
             case 1:
-            photonView.RPC("ApplyCreateUnitVariableRPC", RpcTarget.All, id, VariableManager.Instance.war_hp, VariableManager.Instance.war_off, VariableManager.Instance.war_def, VariableManager.Instance.war_act);
-            break;
+                photonView.RPC("ApplyCreateUnitVariableRPC", RpcTarget.All, id, VariableManager.Instance.war_hp, VariableManager.Instance.war_off, VariableManager.Instance.war_def, VariableManager.Instance.war_act);
+                break;
             case 2:
-            photonView.RPC("ApplyCreateUnitVariableRPC", RpcTarget.All, id, VariableManager.Instance.arc_hp, VariableManager.Instance.arc_off, VariableManager.Instance.arc_def, VariableManager.Instance.arc_act);
-            break;
+                photonView.RPC("ApplyCreateUnitVariableRPC", RpcTarget.All, id, VariableManager.Instance.arc_hp, VariableManager.Instance.arc_off, VariableManager.Instance.arc_def, VariableManager.Instance.arc_act);
+                break;
             case 3:
-            photonView.RPC("ApplyCreateUnitVariableRPC", RpcTarget.All, id, VariableManager.Instance.mag_hp, VariableManager.Instance.mag_off, VariableManager.Instance.mag_def, VariableManager.Instance.mag_act);
-            break;
+                photonView.RPC("ApplyCreateUnitVariableRPC", RpcTarget.All, id, VariableManager.Instance.mag_hp, VariableManager.Instance.mag_off, VariableManager.Instance.mag_def, VariableManager.Instance.mag_act);
+                break;
         }
     }
 
-    
 
-    
+
+
 
     public void BuildingUpgrade(int buildingId)
     {
@@ -651,16 +696,16 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         photonView.RPC("CreateBuildingRPC", RpcTarget.All);
     }
 
-#region // RPC functions
-    
+    #region // RPC functions
 
-    
 
-    
 
-    
 
-    
+
+
+
+
+
 
     //[PunRPC]
     //private void CreatedUnitP1AreaCheckRPC(bool check, int area)
@@ -771,9 +816,9 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     private void ApplyCreateUnitVariableRPC(int id, int hp, int off, int def, int act)
     {
         GameObject[] units = GameObject.FindGameObjectsWithTag("Unit");
-        foreach(GameObject unit in units)
+        foreach (GameObject unit in units)
         {
-            if(unit.GetComponent<PhotonView>().ViewID == id)
+            if (unit.GetComponent<PhotonView>().ViewID == id)
             {
                 unit.GetComponent<MyUnit>().hp = hp;
                 unit.GetComponent<MyUnit>().offensive = off;
@@ -784,7 +829,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         }
     }
 
-    
+
 
     //[PunRPC]
     //private void BuildingUpgradeRPC(int buildingId)
@@ -804,21 +849,21 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     private void ApplyUnitOffenceEffectRPC(int layer, int war_off, int arc_off, int mag_off)
     {
         MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
-        foreach(MyUnit unit in units)
+        foreach (MyUnit unit in units)
         {
-            if(unit.gameObject.layer == layer)
+            if (unit.gameObject.layer == layer)
             {
-                switch(unit.type)
+                switch (unit.type)
                 {
                     case 1:
-                    unit.offensive = war_off;
-                    break;
+                        unit.offensive = war_off;
+                        break;
                     case 2:
-                    unit.offensive = arc_off;
-                    break;
+                        unit.offensive = arc_off;
+                        break;
                     case 3:
-                    unit.offensive = mag_off;
-                    break;
+                        unit.offensive = mag_off;
+                        break;
                 }
             }
         }
@@ -828,39 +873,39 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     private void ApplyUnitDefenceEffectRPC(int layer, int war_def, int arc_def, int mag_def)
     {
         MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
-        foreach(MyUnit unit in units)
+        foreach (MyUnit unit in units)
         {
-            if(unit.gameObject.layer == layer)
+            if (unit.gameObject.layer == layer)
             {
-                switch(unit.type)
+                switch (unit.type)
                 {
                     case 1:
-                    unit.defensive = war_def;
-                    break;
+                        unit.defensive = war_def;
+                        break;
                     case 2:
-                    unit.defensive = arc_def;
-                    break;
+                        unit.defensive = arc_def;
+                        break;
                     case 3:
-                    unit.defensive = mag_def;
-                    break;
+                        unit.defensive = mag_def;
+                        break;
                 }
             }
         }
     }
 
-    
+
 
     [PunRPC]
     private void ApplyUnitCurrentTileRPC(int unitId, int tileId)
     {
         MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
-        foreach(MyUnit unit in units)
+        foreach (MyUnit unit in units)
         {
-            if(unit.GetComponent<PhotonView>().ViewID == unitId)
+            if (unit.GetComponent<PhotonView>().ViewID == unitId)
             {
-                foreach(Tile t in tiles)
+                foreach (Tile t in tiles)
                 {
-                    if(t.GetComponent<PhotonView>().ViewID == tileId)
+                    if (t.GetComponent<PhotonView>().ViewID == tileId)
                     {
                         unit.currentTile = t;
                         return;
@@ -874,9 +919,9 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     private void ApplyUnitActiveCostRPC(int id, int cost)
     {
         MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
-        foreach(MyUnit unit in units)
+        foreach (MyUnit unit in units)
         {
-            if(unit.GetComponent<PhotonView>().ViewID == id)
+            if (unit.GetComponent<PhotonView>().ViewID == id)
             {
                 unit.activeCost += cost;
                 return;
@@ -884,109 +929,111 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         }
     }
 
-    [PunRPC]
-    private void EndGameRPC()
-    {
-        uIManager.SetEndState();
-        if(P1_score > P2_score)
-        {
-            if(isMaster)
-            {
-                GameResult.text = "V I C T O R Y";
-            }
-            else
-            {
-                GameResult.text = "L O S E";
-            }
-        }
-        else if(P1_score == P2_score)
-        {
-            GameResult.text = "T I E";
-        }
-        else
-        {
-            if(isMaster)
-            {
-                GameResult.text = "L O S E";
-            }
-            else
-            {
-                GameResult.text = "V I C T O R Y";
-            }
-        }
-        p1_score.text = P1_score.ToString();
-        p2_score.text = P2_score.ToString();
-        p1_unit.text = P1_totalUnit.ToString();
-        p2_unit.text = P2_totalUnit.ToString();
-        p1_kill.text = P1_totalKill.ToString();
-        p2_kill.text = P2_totalKill.ToString();
-        p1_money.text = P1_totalMoney.ToString();
-        p2_money.text = P2_totalMoney.ToString();
-        p1_occupation.text = P1_totalOccupation.ToString();
-        p2_occupation.text = P2_totalOccupation.ToString();
-    }
 
-    [PunRPC]
-    private void SumScoreRPC(int p1, int p2)
-    {
-        P1_score += p1;
-        P2_score += p2;
-        p1_score.text = P1_score.ToString();
-        p2_score.text = P2_score.ToString();
-    }
+    //    [PunRPC]
+    //    private void EndGameRPC()
+    //    {
+    //        uIManager.SetEndState();
+    //        if(P1_score > P2_score)
+    //        {
+    //            if(isMaster)
+    //            {
+    //                GameResult.text = "V I C T O R Y";
+    //            }
+    //            else
+    //            {
+    //                GameResult.text = "L O S E";
+    //            }
+    //        }
+    //        else if(P1_score == P2_score)
+    //        {
+    //            GameResult.text = "T I E";
+    //        }
+    //        else
+    //        {
+    //            if(isMaster)
+    //            {
+    //                GameResult.text = "L O S E";
+    //            }
+    //            else
+    //            {
+    //                GameResult.text = "V I C T O R Y";
+    //            }
+    //        }
+    //        p1_score.text = P1_score.ToString();
+    //        p2_score.text = P2_score.ToString();
+    //        p1_unit.text = P1_totalUnit.ToString();
+    //        p2_unit.text = P2_totalUnit.ToString();
+    //        p1_kill.text = P1_totalKill.ToString();
+    //        p2_kill.text = P2_totalKill.ToString();
+    //        p1_money.text = P1_totalMoney.ToString();
+    //        p2_money.text = P2_totalMoney.ToString();
+    //        p1_occupation.text = P1_totalOccupation.ToString();
+    //        p2_occupation.text = P2_totalOccupation.ToString();
+    //    }
 
-    [PunRPC]
-    private void SumUnitRPC(int p1, int p2)
-    {
-        P1_totalUnit += p1;
-        P2_totalUnit += p2;
-        p1_unit.text = P1_totalUnit.ToString();
-        p2_unit.text = P2_totalUnit.ToString();
-    }
+    //    [PunRPC]
+    //    private void SumScoreRPC(int p1, int p2)
+    //    {
+    //        P1_score += p1;
+    //        P2_score += p2;
+    //        p1_score.text = P1_score.ToString();
+    //        p2_score.text = P2_score.ToString();
+    //    }
 
-    [PunRPC]
-    private void SumKillRPC(int p1, int p2)
-    {
-        P1_totalKill += p1;
-        P2_totalKill += p2;
-        p1_kill.text = P1_totalKill.ToString();
-        p2_kill.text = P2_totalKill.ToString();
-    }
+    //    [PunRPC]
+    //    private void SumUnitRPC(int p1, int p2)
+    //    {
+    //        P1_totalUnit += p1;
+    //        P2_totalUnit += p2;
+    //        p1_unit.text = P1_totalUnit.ToString();
+    //        p2_unit.text = P2_totalUnit.ToString();
+    //    }
 
-    [PunRPC]
-    private void SumMoneyRPC(int p1, int p2)
-    {
-        P1_totalMoney += p1;
-        P2_totalMoney += p2;
-        p1_money.text = P1_totalMoney.ToString();
-        p2_money.text = P2_totalMoney.ToString();
-    }
+    //    [PunRPC]
+    //    private void SumKillRPC(int p1, int p2)
+    //    {
+    //        P1_totalKill += p1;
+    //        P2_totalKill += p2;
+    //        p1_kill.text = P1_totalKill.ToString();
+    //        p2_kill.text = P2_totalKill.ToString();
+    //    }
 
-    [PunRPC]
-    private void SumOccupationRPC(int p1, int p2)
-    {
-        P1_totalOccupation += p1;
-        P2_totalOccupation += p2;
-        p1_occupation.text = P1_totalOccupation.ToString();
-        p2_occupation.text = P2_totalOccupation.ToString();
-    }
+    //    [PunRPC]
+    //    private void SumMoneyRPC(int p1, int p2)
+    //    {
+    //        P1_totalMoney += p1;
+    //        P2_totalMoney += p2;
+    //        p1_money.text = P1_totalMoney.ToString();
+    //        p2_money.text = P2_totalMoney.ToString();
+    //    }
 
-    [PunRPC]
-    private void CreateBuildingRPC()
-    {
+    //    [PunRPC]
+    //    private void SumOccupationRPC(int p1, int p2)
+    //    {
+    //        P1_totalOccupation += p1;
+    //        P2_totalOccupation += p2;
+    //        p1_occupation.text = P1_totalOccupation.ToString();
+    //        p2_occupation.text = P2_totalOccupation.ToString();
+    //    }
 
-    }
-#endregion
+    //    [PunRPC]
+    //    private void CreateBuildingRPC()
+    //    {
+
+    //    }
+    //#endregion
+    //}
+
+    //[Serializable]
+    //public class Player
+    //{
+    //    [SerializeField]
+    //    private Transform cam_start_point;
+
+    //    public Transform getCamPoint()
+    //    {
+    //        return cam_start_point;
+    //    }
+    #endregion
 }
-
-//[Serializable]
-//public class Player
-//{
-//    [SerializeField]
-//    private Transform cam_start_point;
-
-//    public Transform getCamPoint()
-//    {
-//        return cam_start_point;
-//    }
-//}

@@ -68,7 +68,7 @@ public class VariableManager : MonoBehaviour
 
     private void Start()
     {
-        isMaster = CentralProcessor.Instance.isMaster;
+        //isMaster = CentralProcessor.Instance.isMaster;
 
         if(GameManager.instance.playerData.forceNumber == 1)
         {
@@ -184,11 +184,11 @@ public class VariableManager : MonoBehaviour
             case 1:
             if(isMaster)
             {
-                CentralProcessor.Instance.P1_core_Tile.money = 150;
+                //CentralProcessor.Instance.P1_core_Tile.money = 150;
             }
             else
             {
-                CentralProcessor.Instance.P2_core_Tile.money = 150;
+                //CentralProcessor.Instance.P2_core_Tile.money = 150;
             }
             break;
             case 2:
@@ -198,11 +198,11 @@ public class VariableManager : MonoBehaviour
             }
             if(isMaster)
             {
-                CentralProcessor.Instance.P1_core_Tile.money = 150;
+                //CentralProcessor.Instance.P1_core_Tile.money = 150;
             }
             else
             {
-                CentralProcessor.Instance.P2_core_Tile.money = 150;
+                //CentralProcessor.Instance.P2_core_Tile.money = 150;
             }
             break;
             case 3:

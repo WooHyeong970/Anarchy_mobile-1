@@ -18,12 +18,14 @@ public class MyUnit : MonoBehaviourPun
     
     public int          areaPosNumber;
     public Tile         currentTile;
-    //public bool         isAttackready = false;
-    public int        occScore;
+    public int          occScore;
 
+    [SerializeField]
     ParticleSystem      particle;
+    [SerializeField]
     ParticleSystem      attackParticle;
 
+    [SerializeField]
     bool                isClicked;
 
     Utility             UT = new Utility();
@@ -33,18 +35,26 @@ public class MyUnit : MonoBehaviourPun
 
     public void OnClick()
     {
+        Debug.Log("Debug 1");
         UT.SetManager(ref UI, ref CP);
-        if (CP.currentBuilding != null)
-            CP.currentBuilding.CloseInfo();
+        Debug.Log("Debug 2");
+        //if (UI.unitInfoPanel.gameObject.activeSelf)
+        //{
+        //    CloseInfo();
+        //    return;
+        //}
 
+        Debug.Log("Debug 3");
         if (isClicked)
         {
             CloseInfo();
             return;
         }
+        Debug.Log("Debug 4");
 
         isClicked = true;
-        switch(UI.state)
+        Debug.Log("Debug 5");
+        switch (UI.state)
         {
             case UIManager.State.Idle:
                 Ready();
@@ -60,13 +70,17 @@ public class MyUnit : MonoBehaviourPun
 
     private void Ready()
     {
+        Debug.Log("Debug 6");
         if (this.gameObject.layer == CP.GetPlayer().GetLayer())
         {
+            Debug.Log("Debug 7");
             StartParticle();
+            Debug.Log("Debug 11");
             UT.SetActive(UI.unitButtonPanel, true);
-            if(CP.currentUnit != null)
+            Debug.Log("Debug 12");
+            if (CP.currentUnit != null)
                 CP.currentUnit.CloseInfo();
-
+            Debug.Log("Debug 13");
             CP.currentUnit = this.gameObject.GetComponent<MyUnit>();
         }
         ShowInfo();
@@ -74,6 +88,7 @@ public class MyUnit : MonoBehaviourPun
 
     private void ShowInfo()
     {
+        Debug.Log("Debug 1");
         UI.ShowUnitInfo(this.gameObject.GetComponent<MyUnit>());
     }
 
@@ -100,8 +115,10 @@ public class MyUnit : MonoBehaviourPun
 
     private void StartParticle()
     {
+        Debug.Log("Debug 8");
         UT.SetActive(particle, true);
         particle.Play();
+        Debug.Log("Debug 10");
     }
 
     public void GetAttack()

@@ -14,13 +14,14 @@ public class MoveUnit : MonoBehaviour
     public Image[] p1unit;
     public Image[] p2unit;
 
-    private void Start()
-    {
-        isMaster = CentralProcessor.Instance.isMaster;
-    }
+    //private void Start()
+    //{
+    //    isMaster = CentralProcessor.Instance.isMaster;
+    //}
 
     public void Move()
     {
+        CentralProcessor.Instance.targetTile = pairTile;
         if(!isMove)
         {
             return;
@@ -30,20 +31,20 @@ public class MoveUnit : MonoBehaviour
         {
             isChecked = true;
             ChangeColor(Color.blue);
-            if(CentralProcessor.Instance.current_moveButton != null)
+            if(CentralProcessor.Instance.UI.currentMoveButton != null)
             {
-                CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().ChangeColor(Color.black);
-                CentralProcessor.Instance.current_moveButton.GetComponent<MoveUnit>().isChecked = false;
-                CentralProcessor.Instance.current_moveButton = this.gameObject.GetComponent<Button>();
+                CentralProcessor.Instance.UI.currentMoveButton.GetComponent<MoveUnit>().ChangeColor(Color.black);
+                CentralProcessor.Instance.UI.currentMoveButton.GetComponent<MoveUnit>().isChecked = false;
+                CentralProcessor.Instance.UI.currentMoveButton = this.gameObject.GetComponent<Button>();
             }
             else
             {
-                CentralProcessor.Instance.current_moveButton = this.gameObject.GetComponent<Button>();
+                CentralProcessor.Instance.UI.currentMoveButton = this.gameObject.GetComponent<Button>();
             }
         }
         else
         {
-            CentralProcessor.Instance.current_moveButton = null;
+            CentralProcessor.Instance.UI.currentMoveButton = null;
             OffCheck();
         }
     }

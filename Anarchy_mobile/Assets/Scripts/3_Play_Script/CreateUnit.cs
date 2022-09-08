@@ -17,7 +17,7 @@ public class CreateUnit : MonoBehaviourPunCallbacks
     string              forceName;
 
     StatusManager       statusManager = new StatusManager();
-    Player              player = CentralProcessor.Instance.GetPlayer();
+    Player              player;
     Utility             UT = new Utility();
     UIManager           UI;
     CentralProcessor    CP;
@@ -25,6 +25,7 @@ public class CreateUnit : MonoBehaviourPunCallbacks
 
     private void Start()
     {
+        player = CentralProcessor.Instance.GetPlayer();
         forceName = GameManager.instance.playerData.getForceName();
         unitButtons[0].onClick.AddListener(() => CreateUnitFunc(1));
         unitButtons[1].onClick.AddListener(() => CreateUnitFunc(2));
@@ -37,46 +38,48 @@ public class CreateUnit : MonoBehaviourPunCallbacks
     private void CreateUnitFunc(int type)
     {
         UT.SetManager(ref UI, ref CP, ref VM);
-
         if(CP.GetUnitCnt() <= 0)
         {
             UI.fadeOutErrorMessage("소환 횟수 초과");
             return;
         }
-
-        if(UT.CheckCost(unitCosts[type - 1], CP.GetMoney()))
+        //Debug.Log("Debug 2");
+        if (UT.CheckCost(unitCosts[type - 1], CP.GetMoney()))
         {
             UI.fadeOutErrorMessage("돈이 부족합니다");
             return;
         }
-
-        for(int i = 0; i < 3; i++)
+        //Debug.Log("Debug 3");
+        for (int i = 0; i < 3; i++)
         {
-            if(!player.GetCoreTile().GetCheckPos(i, player.GetLayer()))
+            //Debug.Log("Debug 4");
+            if (!player.GetCoreTile().GetCheckPos(i, player.GetLayer()))
             {
+                //Debug.Log("Debug 5");
                 CP.effectSoundManager.PlayButtonClickSound();
                 CP.SetMoney(CP.GetMoney() - unitCosts[type - 1]);
 
                 GameObject unit = InstantiateUnit(type, i);
-                CP.SumScore(1, 0);
-                CP.SumUnit(1, 0);
+                statusManager.SetCreatedUnitInfo(unit, i);
+                //CP.SumScore(1, 0);
+                //CP.SumUnit(1, 0);
                 CP.SetUnitCnt();
                 player.GetCoreTile().SetCheckPos(i, true, player.GetLayer());
 
-                if (VM.isUnitCostEffect && VM.UnitEffects.Count == 0)
-                {
-                    VM.isUnitCostEffect = false;
-                    VM.UnitCostEffect(-VM.currentUnitBuff);
-                    VM.isUnitCostEffect = false;
-                }
-                else if (VM.isUnitCostEffect && VM.UnitEffects.Count > 0)
-                {
-                    VM.isUnitCostEffect = false;
-                    VM.UnitCostEffect(-VM.currentUnitBuff);
-                    VM.isUnitCostEffect = false;
-                    var n = VM.UnitEffects.Dequeue();
-                    VM.UnitCostEffect(n);
-                }
+                //if (VM.isUnitCostEffect && VM.UnitEffects.Count == 0)
+                //{
+                //    VM.isUnitCostEffect = false;
+                //    VM.UnitCostEffect(-VM.currentUnitBuff);
+                //    VM.isUnitCostEffect = false;
+                //}
+                //else if (VM.isUnitCostEffect && VM.UnitEffects.Count > 0)
+                //{
+                //    VM.isUnitCostEffect = false;
+                //    VM.UnitCostEffect(-VM.currentUnitBuff);
+                //    VM.isUnitCostEffect = false;
+                //    var n = VM.UnitEffects.Dequeue();
+                //    VM.UnitCostEffect(n);
+                //}
                 return;
             }
         }
@@ -86,7 +89,6 @@ public class CreateUnit : MonoBehaviourPunCallbacks
     GameObject InstantiateUnit(int type, int area)
     {
         GameObject unit = PhotonNetwork.Instantiate(forceName + "_TYPE" + type.ToString(), player.GetUnitArea(area).position, Quaternion.Euler(0, player.GetQuaternioin(), 0)) as GameObject;
-        statusManager.setCreatedUnitStatus(unit);
         return unit;
     }
 }
