@@ -1,0 +1,10 @@
+,Unit_Name,Unit_Type,Unit_Cost,Unit_HP,Unit_ActiveCost,Unit_Offensive,Unit_Defensive
+MAFIA_TYPE1,Mafia_War,1,40,2,3,15,45
+MAFIA_TYPE2,Mafia_Arc,2,80,2,4,35,10
+MAFIA_TYPE3,Mafia_Hero,3,170,3,6,50,50
+NEW_WAVE_TYPE1,New_wave_War,1,60,2,3,20,55
+NEW_WAVE_TYPE2,New_wave_Arc,2,100,2,3,50,25
+NEW_WAVE_TYPE3,New_wave_Hero,3,220,3,5,70,70
+SOCIETY_TYPE1,Society_War,1,90,2,2,25,65
+SOCIETY_TYPE2,Society_Arc,2,170,2,2,60,30
+SOCIETY_TYPE3,Society_Hero,3,300,3,4,90,90

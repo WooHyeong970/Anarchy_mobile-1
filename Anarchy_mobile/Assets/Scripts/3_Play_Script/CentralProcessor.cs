@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using System;
 using AnarchyUtility;
+using Status;
 
 public class CentralProcessor : MonoBehaviourPunCallbacks
 {
@@ -20,6 +21,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         }
     }
 
+    StatusManager status = new StatusManager();
     private static CentralProcessor instance;
     public CameraManager cameraManager;
     public UIManager UI;
@@ -96,9 +98,21 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     enum WhoseTurn { PLAYER1 = 7, PLAYER2 };
     WhoseTurn whoseTurn;
 
+    public TextAsset mafiaStatus;
+    public TextAsset newWaveStatus;
+    public TextAsset societyStatus;
+    
+    string csvText;
+    string[] rows;
+    string[] names = new string[3];
+    int[,] unitStatus = new int[3, 5];
+
+    [SerializeField]
+    int[] buildingLevels = new int[] { 1, 1, 1 };
+    int[] buildingCosts = new int[] { 250, 500, 1000, 0 };
+
     bool isPlay = true;
     bool isWaiting = true;
-    //public Text         waitingText;
 
     public Tile currentTile;
     [SerializeField]
@@ -109,7 +123,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     float selectCount;
     int time = 180;
     int turnNumber = 0;
-    //public Text         turnEndText;
+
     int score;
     int kill;
 
@@ -144,6 +158,7 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         currentTile.ShowOcc(currentTile.GetOccupatedScore());
 
         t = Timer();
+        SettingStatus();
     }
 
     private void Update()
@@ -294,6 +309,55 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
         unitCnt -= 1;
     }
 
+    void SettingStatus()
+    {
+        switch (GameManager.instance.playerData.getForceName())
+        {
+            case "MAFIA":
+                csvText = mafiaStatus.text.Substring(0, mafiaStatus.text.Length - 1);
+                break;
+            case "NEW_WAVE":
+                csvText = newWaveStatus.text.Substring(0, newWaveStatus.text.Length - 1);
+                break;
+            case "SOCIETY":
+                csvText = societyStatus.text.Substring(0, societyStatus.text.Length - 1);
+                break;
+        }
+        rows = csvText.Split(new char[] { '\n' });
+        for (int i = 1; i < rows.Length; i++)
+        {
+            string[] rowValues = rows[i].Split(new char[] { ',' });
+            names[i - 1] = rowValues[0];
+            for (int j = 0; j < 5; j++)
+                unitStatus[(i - 1), j] = int.Parse(rowValues[j + 1]);
+        }
+    }
+
+    public void SetStatus(int row, int col, int num)
+    {
+        unitStatus[row, col] = num;
+
+    }
+
+    public int GetUnitStatus(int row, int col)
+    {
+        return unitStatus[row, col];
+    }
+
+    public int GetBuildingCost(int level)
+    {
+        return buildingCosts[level];
+    }
+
+    public int[] GetBuildingLevels()
+    {
+        return buildingLevels;
+    }
+
+    public void SetBuildingLevels(int type, int level)
+    {
+        buildingLevels[type] = level;
+    }
     #endregion
     //================================================================================
     // coroutine
@@ -845,53 +909,53 @@ public class CentralProcessor : MonoBehaviourPunCallbacks
     //    }
     //}
 
-    [PunRPC]
-    private void ApplyUnitOffenceEffectRPC(int layer, int war_off, int arc_off, int mag_off)
-    {
-        MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
-        foreach (MyUnit unit in units)
-        {
-            if (unit.gameObject.layer == layer)
-            {
-                switch (unit.type)
-                {
-                    case 1:
-                        unit.offensive = war_off;
-                        break;
-                    case 2:
-                        unit.offensive = arc_off;
-                        break;
-                    case 3:
-                        unit.offensive = mag_off;
-                        break;
-                }
-            }
-        }
-    }
+    //[PunRPC]
+    //private void ApplyUnitOffenceEffectRPC(int layer, int war_off, int arc_off, int mag_off)
+    //{
+    //    MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
+    //    foreach (MyUnit unit in units)
+    //    {
+    //        if (unit.gameObject.layer == layer)
+    //        {
+    //            switch (unit.type)
+    //            {
+    //                case 1:
+    //                    unit.offensive = war_off;
+    //                    break;
+    //                case 2:
+    //                    unit.offensive = arc_off;
+    //                    break;
+    //                case 3:
+    //                    unit.offensive = mag_off;
+    //                    break;
+    //            }
+    //        }
+    //    }
+    //}
 
-    [PunRPC]
-    private void ApplyUnitDefenceEffectRPC(int layer, int war_def, int arc_def, int mag_def)
-    {
-        MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
-        foreach (MyUnit unit in units)
-        {
-            if (unit.gameObject.layer == layer)
-            {
-                switch (unit.type)
-                {
-                    case 1:
-                        unit.defensive = war_def;
-                        break;
-                    case 2:
-                        unit.defensive = arc_def;
-                        break;
-                    case 3:
-                        unit.defensive = mag_def;
-                        break;
-                }
-            }
-        }
-    }
+    //[PunRPC]
+    //private void ApplyUnitDefenceEffectRPC(int layer, int war_def, int arc_def, int mag_def)
+    //{
+    //    MyUnit[] units = GameObject.FindObjectsOfType<MyUnit>();
+    //    foreach (MyUnit unit in units)
+    //    {
+    //        if (unit.gameObject.layer == layer)
+    //        {
+    //            switch (unit.type)
+    //            {
+    //                case 1:
+    //                    unit.defensive = war_def;
+    //                    break;
+    //                case 2:
+    //                    unit.defensive = arc_def;
+    //                    break;
+    //                case 3:
+    //                    unit.defensive = mag_def;
+    //                    break;
+    //            }
+    //        }
+    //    }
+    //}
 
 
 

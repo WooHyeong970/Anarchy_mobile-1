@@ -32,6 +32,6 @@ public class TitleFontShadow : MonoBehaviour, IPointerEnterHandler, IPointerExit
 
     public void ExitButton()
     {
-
+        GameManager.instance.ExitGame();
     }
 }

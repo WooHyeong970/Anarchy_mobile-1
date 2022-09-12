@@ -6,14 +6,18 @@ using AnarchyUtility;
 
 public class MyUnit : MonoBehaviourPun
 {
-    public int          type;
+    [SerializeField]
+    private int         type;
+    [SerializeField]
+    private string      unitName;
     public int          cost;
     public int          hp;
     public int          activeCost;
-    public int          defensive;
     public int          offensive;
+    public int          defensive;
+
     public Sprite       illust;
-    public string       unitName;
+    
     public int          accDamage = 0;
     
     public int          areaPosNumber;
@@ -35,25 +39,15 @@ public class MyUnit : MonoBehaviourPun
 
     public void OnClick()
     {
-        Debug.Log("Debug 1");
         UT.SetManager(ref UI, ref CP);
-        Debug.Log("Debug 2");
-        //if (UI.unitInfoPanel.gameObject.activeSelf)
-        //{
-        //    CloseInfo();
-        //    return;
-        //}
 
-        Debug.Log("Debug 3");
         if (isClicked)
         {
             CloseInfo();
             return;
         }
-        Debug.Log("Debug 4");
 
         isClicked = true;
-        Debug.Log("Debug 5");
         switch (UI.state)
         {
             case UIManager.State.Idle:
@@ -70,25 +64,23 @@ public class MyUnit : MonoBehaviourPun
 
     private void Ready()
     {
-        Debug.Log("Debug 6");
+        // 클릭한 유닛이 아군 유닛이면 ButtonPanel도 함께 true
         if (this.gameObject.layer == CP.GetPlayer().GetLayer())
         {
-            Debug.Log("Debug 7");
-            StartParticle();
-            Debug.Log("Debug 11");
-            UT.SetActive(UI.unitButtonPanel, true);
-            Debug.Log("Debug 12");
+            // 이미 클릭된 유닛이 있다면 먼저 초기화 실행
             if (CP.currentUnit != null)
                 CP.currentUnit.CloseInfo();
-            Debug.Log("Debug 13");
+            StartParticle();
+            UT.SetActive(UI.unitButtonPanel, true);
             CP.currentUnit = this.gameObject.GetComponent<MyUnit>();
         }
+
+        // 클릭한 유닛이 적군 유닛이면 InfoPanel만 true
         ShowInfo();
     }
 
     private void ShowInfo()
     {
-        Debug.Log("Debug 1");
         UI.ShowUnitInfo(this.gameObject.GetComponent<MyUnit>());
     }
 
@@ -115,10 +107,8 @@ public class MyUnit : MonoBehaviourPun
 
     private void StartParticle()
     {
-        Debug.Log("Debug 8");
         UT.SetActive(particle, true);
         particle.Play();
-        Debug.Log("Debug 10");
     }
 
     public void GetAttack()
@@ -126,6 +116,16 @@ public class MyUnit : MonoBehaviourPun
         hp -= 1;
         accDamage = 0;
         attackParticle.Play();
+    }
+
+    public int GetUnitType()
+    {
+        return type;
+    }
+
+    public string GetUnitName()
+    {
+        return name;
     }
 
     public void ActiveCostUpdate()

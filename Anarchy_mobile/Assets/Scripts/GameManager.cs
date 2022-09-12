@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+//using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -52,6 +53,11 @@ public class GameManager : MonoBehaviour
     {
         audioManager.ButtonClickSound();
         SceneManager.LoadScene(str);
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }
 

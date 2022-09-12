@@ -5,6 +5,8 @@ using AnarchyUtility;
 
 public class MyBuilding : MonoBehaviour
 {
+    [SerializeField]
+    private int         type;
     public int          level;
     [TextArea]
     public string       desc;
@@ -20,16 +22,14 @@ public class MyBuilding : MonoBehaviour
     public void OnClick()
     {
         UT.SetManager(ref UI, ref CP);
-        if (CP.currentUnit != null)
-            CP.currentUnit.CloseInfo();
 
         if(isClicked)
         {
-            isClicked = false;
             CloseInfo();
             return;
         }
 
+        isClicked = true;
         if(CP.currentBuilding != null)
             CP.currentBuilding.CloseInfo();
 
@@ -41,5 +41,10 @@ public class MyBuilding : MonoBehaviour
     {
         isClicked = false;
         UI.CloseBuildingInfo();
+    }
+
+    public int GetBuildingType()
+    {
+        return type;
     }
 }

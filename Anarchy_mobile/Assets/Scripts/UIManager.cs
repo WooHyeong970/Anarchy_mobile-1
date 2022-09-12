@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 using AnarchyUtility;
+using Status;
 
 public class UIManager : MonoBehaviourPun
 {
@@ -15,6 +16,7 @@ public class UIManager : MonoBehaviourPun
     //================================================================================
     Utility UT = new Utility();
     Decision decision = new Decision();
+    StatusManager status = new StatusManager();
 
     public enum State { Ready, Next, Idle, Active, Attack, End };
     public State state = State.Idle;
@@ -43,6 +45,8 @@ public class UIManager : MonoBehaviourPun
     public GameObject gameoverWindow;
     public GameObject decisionList;
 
+    public Text[] unitCosts = new Text[3];
+    public Text[] buildingCosts = new Text[3];
     public Text curMoney;
     public Text waitingText;
     public Text checkTurn;
@@ -95,11 +99,11 @@ public class UIManager : MonoBehaviourPun
 
 
     public Button costIgnoreButton;
-    
     public Button moveButton;
     public Button currentMoveButton;
-    
     public Button BGMOnOffButton;
+
+    public string[] buildingDesc = new string[3];
 
     Color errorMessageColor = new Color();
     IEnumerator errorMessageCo;
@@ -177,8 +181,8 @@ public class UIManager : MonoBehaviourPun
     public void ShowUnitInfo(MyUnit unit)
     {
         UT.SetActive(unitInfoPanel, true);
-        unitName.text = unit.unitName;
-        unitActiveCost.text = unit.cost.ToString();
+        unitName.text = unit.GetUnitName();
+        unitActiveCost.text = unit.activeCost.ToString();
         unitIllust.sprite = unit.illust;
         unitATK.text = unit.offensive.ToString();
         unitDEF.text = unit.defensive.ToString();
@@ -204,11 +208,12 @@ public class UIManager : MonoBehaviourPun
         for (int i = 0; i < building.level; i++)
             UT.SetActive(buildingLevels[i], true);
 
-        buildingEffect.text = building.desc;
+        buildingEffect.text = buildingDesc[building.GetBuildingType() - 1];
     }
 
     public void CloseBuildingInfo()
     {
+        CentralProcessor.Instance.currentBuilding = null;
         UT.SetActive(buildingInfoPanel, false);
         ResetBuildingLevel();
     }
@@ -272,6 +277,9 @@ public class UIManager : MonoBehaviourPun
         SetActiveState();
         UT.SetActive(closeWindow, true);
         UT.SetActive(unitWindow, true);
+
+        for (int i = 0; i < 3; i++)
+            unitCosts[i].text = status.GetStatus(i, (int)StatusManager.UNIT.COST).ToString();
     }
 
     private void BuildButtonClick()
@@ -279,6 +287,14 @@ public class UIManager : MonoBehaviourPun
         SetActiveState();
         UT.SetActive(closeWindow, true);
         UT.SetActive(buildWindow, true);
+
+        ShowBuildingCosts();
+    }
+
+    public void ShowBuildingCosts()
+    {
+        for (int i = 0; i < 3; i++)
+            buildingCosts[i].text = CentralProcessor.Instance.GetBuildingCost(CentralProcessor.Instance.GetBuildingLevels()[i] - 1).ToString();
     }
 
     private void MinimapButtonClick()

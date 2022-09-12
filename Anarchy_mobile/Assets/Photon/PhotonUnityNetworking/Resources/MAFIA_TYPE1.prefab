@@ -51,13 +51,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
+  unitName: Mafia_war
   cost: 100
-  hp: 0
+  hp: 3
   activeCost: 3
-  defensive: 65
   offensive: 28
-  illust: {fileID: 21300000, guid: 1f43b832babfbf04bb4f72e9fc323c7f, type: 3}
-  unitName: 
+  defensive: 65
+  illust: {fileID: 21300000, guid: f59df05d262389b469d38f7d4ecb6334, type: 3}
   accDamage: 0
   areaPosNumber: 0
   currentTile: {fileID: 0}

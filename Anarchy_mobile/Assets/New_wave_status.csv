@@ -1,0 +1,4 @@
+,Unit_Cost,Unit_HP,Unit_ActiveCost,Unit_Offensive,Unit_Defensive,,
+NEW_WAVE_TYPE1,60,2,3,20,55,,
+NEW_WAVE_TYPE2,100,2,3,50,25,,
+NEW_WAVE_TYPE3,220,3,5,70,70,,

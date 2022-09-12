@@ -9,7 +9,7 @@ using AnarchyUtility;
 public class CreateUnit : MonoBehaviourPunCallbacks
 {
     public Button[]     unitButtons = new Button[3];
-    public Text[]       costTexts = new Text[3];
+    
     public Image[]      illusts = new Image[3];
 
     [SerializeField]
@@ -43,43 +43,24 @@ public class CreateUnit : MonoBehaviourPunCallbacks
             UI.fadeOutErrorMessage("소환 횟수 초과");
             return;
         }
-        //Debug.Log("Debug 2");
         if (UT.CheckCost(unitCosts[type - 1], CP.GetMoney()))
         {
             UI.fadeOutErrorMessage("돈이 부족합니다");
             return;
         }
-        //Debug.Log("Debug 3");
         for (int i = 0; i < 3; i++)
         {
-            //Debug.Log("Debug 4");
             if (!player.GetCoreTile().GetCheckPos(i, player.GetLayer()))
             {
-                //Debug.Log("Debug 5");
                 CP.effectSoundManager.PlayButtonClickSound();
                 CP.SetMoney(CP.GetMoney() - unitCosts[type - 1]);
 
                 GameObject unit = InstantiateUnit(type, i);
-                statusManager.SetCreatedUnitInfo(unit, i);
+                statusManager.SetCreatedUnitInfo(unit.GetComponent<MyUnit>(), i);
                 //CP.SumScore(1, 0);
                 //CP.SumUnit(1, 0);
                 CP.SetUnitCnt();
                 player.GetCoreTile().SetCheckPos(i, true, player.GetLayer());
-
-                //if (VM.isUnitCostEffect && VM.UnitEffects.Count == 0)
-                //{
-                //    VM.isUnitCostEffect = false;
-                //    VM.UnitCostEffect(-VM.currentUnitBuff);
-                //    VM.isUnitCostEffect = false;
-                //}
-                //else if (VM.isUnitCostEffect && VM.UnitEffects.Count > 0)
-                //{
-                //    VM.isUnitCostEffect = false;
-                //    VM.UnitCostEffect(-VM.currentUnitBuff);
-                //    VM.isUnitCostEffect = false;
-                //    var n = VM.UnitEffects.Dequeue();
-                //    VM.UnitCostEffect(n);
-                //}
                 return;
             }
         }
